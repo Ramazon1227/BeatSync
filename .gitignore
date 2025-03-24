@@ -1,0 +1,33 @@
+
+# Test binary, build artifacts
+*.test
+*.out
+
+# Output of the go coverage tool
+*.cover
+
+# Dependency directories (vendor/)
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE/editor specific files
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# env file
+.env
