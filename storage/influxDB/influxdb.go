@@ -9,19 +9,28 @@ import (
 )
 
 type Store struct {
-	db   influxdb2.Client
+	db   *influxdb2.Client
 	user storage.UserRepoI
 }
 
 func (s *Store) CloseDB() {
-	s.db.Close()
+	(*s.db).Close()
 }
 
 func NewInfluxDB(ctx context.Context, cfg config.Config) (storage.StorageI,error) {
 	client := influxdb2.NewClient(cfg.InfluxURL, cfg.InfluxToken)
 
 	return &Store{
-		db: client,
-		// user : storage.UserRepoI,
+		db:    &client,
+		user : NewUserRepoI(&client),
 	}, nil
+}
+
+
+func (s *Store) User() storage.UserRepoI{
+	if s.user == nil {
+		s.user = NewUserRepoI(s.db)
+	}
+
+	return s.user
 }
