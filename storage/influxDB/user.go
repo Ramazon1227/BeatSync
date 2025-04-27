@@ -2,23 +2,34 @@ package influxdb
 
 import (
 	"context"
-	// "fmt"
+	// "github.com/Ramazon1227/BeatSync/config"
 
 	"github.com/Ramazon1227/BeatSync/models"
+	"github.com/influxdata/influxdb-client-go/api"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 )
 
 type UserRepoImpl struct {
-	db  *influxdb2.Client
+	db       *influxdb2.Client
+	Org      string
+	Bucket   string
+	WriteAPI api.WriteAPI
+	QueryAPI api.QueryAPI
 }
 
 func NewUserRepoI(client *influxdb2.Client) *UserRepoImpl {
-	
-	return &UserRepoImpl{db: client}
+
+	return &UserRepoImpl{
+		db: client,
+		// Org: config.InfluxOrg,
+		// Bucket: config.InfluxBucket,
+		// WriteAPI: (*client).WriteAPIBlocking(Config.InfluxOrg, Config.InfluxBucket),
+		// QueryAPI: (*client).QueryAPI(Config.InfluxOrg),
+	}
 }
 
-func (user *UserRepoImpl) Create (ctx context.Context , entity *models.UserCreateModel) (pKey *models.PrimaryKey, err error) {
-    
+func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserCreateModel) (pKey *models.PrimaryKey, err error) {
+
 	// writeAPI := (*user.db).WriteAPIBlocking(org, bucket)
 
 	// // Create data point
@@ -35,5 +46,5 @@ func (user *UserRepoImpl) Create (ctx context.Context , entity *models.UserCreat
 	// }
 
 	return nil, nil
-	
+
 }

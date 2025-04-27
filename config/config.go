@@ -29,6 +29,9 @@ type Config struct {
 	InfluxURL   string
 	InfluxToken string
 
+	InfluxOrg    string
+	InfluxBucket string
+
 	SecretKey string
 
 	PasscodePool   string
@@ -62,7 +65,9 @@ func Load() Config {
 
 	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "http://localhost:8086"))
 	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "your-influxdb-token"))
-
+	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "your-influxdb-org"))
+	config.InfluxBucket = cast.ToString(getOrReturnDefaultValue("INFLUX_BUCKET", "your-influxdb-bucket"))
+	
 	config.SecretKey = cast.ToString(getOrReturnDefaultValue("SECRET_KEY", "Here$houldBe$ome$ecretKey"))
 
 	config.PasscodePool = cast.ToString(getOrReturnDefaultValue("PASSCODE_POOL", "0123456789"))
