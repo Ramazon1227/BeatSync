@@ -1,13 +1,8 @@
 
-CreateUser
-GetUserById
-UpdateUser
-GetUserList
-DeleteUser
-
-
+Register
 Login
 Logout
-RefreshToken
-ChangePassword
 
+UpdateProfile
+ChangePassword
+RefreshToken

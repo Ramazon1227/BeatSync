@@ -53,6 +53,108 @@ definitions:
       status:
         type: string
     type: object
+  models.LoginRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      password:
+        example: secret123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.LoginResponse:
+    properties:
+      expires_at:
+        type: string
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.LogoutRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  models.UpdatePasswordRequest:
+    properties:
+      current_password:
+        example: oldpassword123
+        type: string
+      new_password:
+        example: newpassword123
+        type: string
+    required:
+    - current_password
+    - new_password
+    type: object
+  models.UpdateProfileRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "+1234567890"
+        type: string
+    type: object
+  models.User:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      height:
+        type: number
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      weight:
+        type: number
+    type: object
+  models.UserRegisterModel:
+    properties:
+      confirm_password:
+        minLength: 8
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - confirm_password
+    - email
+    - first_name
+    - last_name
+    - password
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -114,6 +216,242 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
       summary: returns "pong" message
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      operationId: login
+      parameters:
+      - description: login credentials
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: Login User
+      tags:
+      - auth
+  /v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidate user's JWT token
+      operationId: logout
+      parameters:
+      - description: logout request
+        in: body
+        name: logout
+        required: true
+        schema:
+          $ref: '#/definitions/models.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: Logout User
+      tags:
+      - auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      operationId: register-user
+      parameters:
+      - description: user registration data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRegisterModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: Register User
+      tags:
+      - auth
+  /v1/profile:
+    get:
+      consumes:
+      - application/json
+      description: Get authenticated user's profile information
+      operationId: get-profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User Profile
+      tags:
+      - profile
+    put:
+      consumes:
+      - application/json
+      description: Update authenticated user's profile
+      operationId: update-profile
+      parameters:
+      - description: profile data
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update User Profile
+      tags:
+      - profile
+  /v1/profile/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by ID
+      operationId: delete-user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete User
+      tags:
+      - profile
+  /v1/profile/password:
+    put:
+      consumes:
+      - application/json
+      description: Update authenticated user's password
+      operationId: update-password
+      parameters:
+      - description: password data
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update User Password
+      tags:
+      - profile
 security:
 - ApiKeyAuth: []
 securityDefinitions:

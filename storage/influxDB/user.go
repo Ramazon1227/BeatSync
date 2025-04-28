@@ -17,10 +17,10 @@ type UserRepoImpl struct {
 	QueryAPI api.QueryAPI
 }
 
-func NewUserRepoI(client *influxdb2.Client) *UserRepoImpl {
+func NewUserRepoI(client influxdb2.Client) *UserRepoImpl {
 
 	return &UserRepoImpl{
-		db: client,
+		db: &client,
 		// Org: config.InfluxOrg,
 		// Bucket: config.InfluxBucket,
 		// WriteAPI: (*client).WriteAPIBlocking(Config.InfluxOrg, Config.InfluxBucket),
@@ -28,7 +28,7 @@ func NewUserRepoI(client *influxdb2.Client) *UserRepoImpl {
 	}
 }
 
-func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserCreateModel) (pKey *models.PrimaryKey, err error) {
+func (user *UserRepoImpl) Create(ctx context.Context, entity *models.User) (pKey *models.PrimaryKey, err error) {
 
 	// writeAPI := (*user.db).WriteAPIBlocking(org, bucket)
 
