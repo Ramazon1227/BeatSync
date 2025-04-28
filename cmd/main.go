@@ -4,8 +4,9 @@ import (
 	// "context"
 
 	"github.com/Ramazon1227/BeatSync/config"
-	// "github.com/Ramazon1227/BeatSync/api"
+	"github.com/Ramazon1227/BeatSync/api"
 	"github.com/Ramazon1227/BeatSync/pkg/logger"
+	"github.com/Ramazon1227/BeatSync/api/handlers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,9 +38,9 @@ func main() {
 	// }
 	// defer pgStore.CloseDB()
 
-	// h := handlers.NewHandler(cfg, log, pgStore)
+	h := handlers.NewHandler(cfg, log, nil)
 
-	// r := api.SetUpRouter(h, cfg)
+	r := api.SetUpRouter(h, cfg)
 
-	// r.Run(cfg.HTTPPort)
+	r.Run(cfg.HTTPPort)
 }

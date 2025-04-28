@@ -1,0 +1,125 @@
+basePath: /api/
+definitions:
+  config.Config:
+    properties:
+      defaultLimit:
+        type: string
+      defaultOffset:
+        type: string
+      environment:
+        description: debug, test, release
+        type: string
+      httpport:
+        type: string
+      httpscheme:
+        type: string
+      influxBucket:
+        type: string
+      influxOrg:
+        type: string
+      influxToken:
+        type: string
+      influxURL:
+        type: string
+      passcodeLength:
+        type: integer
+      passcodePool:
+        type: string
+      secretKey:
+        type: string
+      serviceHost:
+        type: string
+      serviceName:
+        type: string
+      smtpfrom:
+        type: string
+      smtphost:
+        description: Email Configuration
+        type: string
+      smtppassword:
+        type: string
+      smtpport:
+        type: integer
+      smtpusername:
+        type: string
+      version:
+        type: string
+    type: object
+  github_com_Ramazon1227_BeatSync_api_http.Response:
+    properties:
+      data: {}
+      description:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is an api gateway
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: BeatSync API
+  version: "1.0"
+paths:
+  /config:
+    get:
+      consumes:
+      - application/json
+      description: show service config data when the service environment set to debug
+        mode
+      operationId: get_config
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response data
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/config.Config'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: get config data on the debug mode
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: this returns "pong" messsage to show service is working
+      operationId: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response data
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: returns "pong" message
+security:
+- ApiKeyAuth: []
+securityDefinitions:
+  ApiKeyAuth:
+    description: Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -37,6 +37,9 @@ type Config struct {
 	PasscodePool   string
 	PasscodeLength int
 
+	DefaultOffset string
+	DefaultLimit  string
+
 	// Email Configuration
 	SMTPHost     string
 	SMTPPort     int
@@ -53,7 +56,7 @@ func Load() Config {
 
 	config := Config{}
 
-	config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "exam_management"))
+config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "BeatSync"))
 	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0"))
 
@@ -72,6 +75,10 @@ func Load() Config {
 
 	config.PasscodePool = cast.ToString(getOrReturnDefaultValue("PASSCODE_POOL", "0123456789"))
 	config.PasscodeLength = cast.ToInt(getOrReturnDefaultValue("PASSCODE_LENGTH", "6"))
+
+
+	config.DefaultOffset = cast.ToString(getOrReturnDefaultValue("DEFAULT_OFFSET", "0"))
+	config.DefaultLimit = cast.ToString(getOrReturnDefaultValue("DEFAULT_LIMIT", "10"))
 
 	// Load email configuration
 	config.SMTPHost = cast.ToString(getOrReturnDefaultValue("SMTP_HOST", "smtp.gmail.com"))
