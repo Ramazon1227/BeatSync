@@ -3,10 +3,13 @@ package main
 import (
 	// "context"
 
-	"github.com/Ramazon1227/BeatSync/config"
+	"context"
+
 	"github.com/Ramazon1227/BeatSync/api"
-	"github.com/Ramazon1227/BeatSync/pkg/logger"
 	"github.com/Ramazon1227/BeatSync/api/handlers"
+	"github.com/Ramazon1227/BeatSync/config"
+	"github.com/Ramazon1227/BeatSync/pkg/logger"
+	influxdb "github.com/Ramazon1227/BeatSync/storage/influxDB"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,13 +35,13 @@ func main() {
 	log := logger.NewLogger(cfg.ServiceName, loggerLevel)
 	defer logger.Cleanup(log)
 
-	// pgStore, err := postgres.NewPostgres(context.Background(), cfg)
-	// if err != nil {
-	// 	log.Panic("postgres.NewPostgres", logger.Error(err))
-	// }
-	// defer pgStore.CloseDB()
+	influxdb, err := influxdb.NewInfluxDB(context.Background(), cfg)
+	if err != nil {
+		log.Panic("postgres.NewPostgres", logger.Error(err))
+	}
+	defer influxdb.CloseDB()
 
-	h := handlers.NewHandler(cfg, log, nil)
+	h := handlers.NewHandler(cfg, log, influxdb)
 
 	r := api.SetUpRouter(h, cfg)
 

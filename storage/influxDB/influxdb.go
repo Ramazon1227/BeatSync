@@ -22,14 +22,14 @@ func NewInfluxDB(ctx context.Context, cfg config.Config) (storage.StorageI,error
 
 	return &Store{
 		db:    &client,
-		user : NewUserRepoI(&client),
+		user : NewUserRepoI(client),
 	}, nil
 }
 
 
 func (s *Store) User() storage.UserRepoI{
 	if s.user == nil {
-		s.user = NewUserRepoI(s.db)
+		s.user = NewUserRepoI(*s.db)
 	}
 
 	return s.user

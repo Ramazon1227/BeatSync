@@ -58,12 +58,11 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 	api := r.Group("/api")
 	api.GET("/ping", h.Ping)
 	api.GET("/config", h.GetConfig)
-	// v1 := api.Group("/v1")
+	v1 := api.Group("/v1")
 	{
-
-		// // User
-		// v1.POST("user", h.CreateUser)
-		// v1.GET("user/:user_id", h.GetUserByID)
+		// User
+		v1.POST("auth/register", h.RegisterUser)
+		v1.POST("auth/login", h.Login)
 		// v1.GET("user", h.GetUserList)
 		// v1.PUT("user/:user_id", h.UpdateUser)
 		// v1.DELETE("user/:user_id", h.DeleteUser)

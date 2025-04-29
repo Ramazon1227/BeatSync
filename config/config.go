@@ -56,7 +56,7 @@ func Load() Config {
 
 	config := Config{}
 
-config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "BeatSync"))
+    config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "BeatSync"))
 	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0"))
 
@@ -67,9 +67,9 @@ config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "Beat
 	config.HTTPScheme = cast.ToString(getOrReturnDefaultValue("HTTP_SCHEME", "http"))
 
 	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "http://localhost:8086"))
-	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "your-influxdb-token"))
-	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "your-influxdb-org"))
-	config.InfluxBucket = cast.ToString(getOrReturnDefaultValue("INFLUX_BUCKET", "your-influxdb-bucket"))
+	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "WtNUJsTl0qDSOzQa1OO4mnlaPh1tGOtSC34-LvdAoKzNZNXk9OgkjbyU3W4QMCTxogmsTYk3FLX0JjtBSwqE3A=="))
+	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "beatsync"))
+	config.InfluxBucket = cast.ToString(getOrReturnDefaultValue("INFLUX_BUCKET", "beatsync-bucket"))
 	
 	config.SecretKey = cast.ToString(getOrReturnDefaultValue("SECRET_KEY", "Here$houldBe$ome$ecretKey"))
 

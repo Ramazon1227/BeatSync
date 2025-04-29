@@ -8,6 +8,7 @@ require (
 	github.com/influxdata/influxdb-client-go v1.4.0
 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/joho/godotenv v1.5.1
+	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cast v1.7.1
 	github.com/streamingfast/logging v0.0.0-20250404134358-92b15d2fbd2e
 	github.com/swaggo/files v1.0.1

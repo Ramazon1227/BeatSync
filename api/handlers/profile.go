@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	// "fmt"
 	// "hash"
 
@@ -33,6 +34,11 @@ func (h *Handler) RegisterUser(c *gin.Context) {
         h.handleResponse(c, httpapi.BadRequest, err)
         return
     }
+
+	if user.Password != user.ConfirmPassword {
+		h.handleResponse(c, httpapi.BadRequest, "passwords do not match")
+		return
+	}
 
     resp, err := h.storage.User().Create(context.Background(), &user)
     if err != nil {
@@ -79,7 +85,8 @@ func (h *Handler) Login(c *gin.Context) {
 		h.handleResponse(c, httpapi.InternalServerError, err)
 		return
 	}
-    
+    fmt.Println("User found:", user)
+	// Check if the password is correct
 	if !utils.CheckPassword(user.Password, req.Password) {
 		h.handleResponse(c, httpapi.Unauthorized, "invalid credentials")
 		return
@@ -142,24 +149,24 @@ func (h *Handler) Logout(c *gin.Context) {
 // @Success 200 {object} models.User
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
-func (h *Handler) GetProfile(c *gin.Context) {
-    userId, exists := c.Get("user_id")
-    if !exists {
-        h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
-        return
-    }
+// func (h *Handler) GetProfile(c *gin.Context) {
+//     userId, exists := c.Get("user_id")
+//     if !exists {
+//         h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+//         return
+//     }
 
-    user, err := h.storage.User().GetById(context.Background(), &models.PrimaryKey{Id: userId.(string)})
-    if err != nil {
-        h.handleResponse(c, httpapi.InternalServerError, err)
-        return
-    }
+//     user, err := h.storage.User().GetById(context.Background(), &models.PrimaryKey{Id: userId.(string)})
+//     if err != nil {
+//         h.handleResponse(c, httpapi.InternalServerError, err)
+//         return
+//     }
 
-    // Clear sensitive information
-    user.Password = ""
+//     // Clear sensitive information
+//     user.Password = ""
 
-    c.JSON(httpapi.OK.Code, user)
-}
+//     c.JSON(httpapi.OK.Code, user)
+// }
 
 // UpdateProfile godoc
 // @ID update-profile
@@ -175,32 +182,32 @@ func (h *Handler) GetProfile(c *gin.Context) {
 // @Failure 400 {object} httpapi.Response
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
-func (h *Handler) UpdateProfile(c *gin.Context) {
-	userId, exists := c.Get("user_id")
-	if !exists {
-		h.handleResponse(c, httpapi.Unauthorized, "unauthorized")
-		return
-	}
+// func (h *Handler) UpdateProfile(c *gin.Context) {
+// 	userId, exists := c.Get("user_id")
+// 	if !exists {
+// 		h.handleResponse(c, httpapi.Unauthorized, "unauthorized")
+// 		return
+// 	}
 
-	var req models.UpdateProfileRequest
-	err := c.ShouldBindJSON(&req)
-	if err != nil {
-		h.handleResponse(c, httpapi.BadRequest, err.Error())
-		return
-	}
+// 	var req models.UpdateProfileRequest
+// 	err := c.ShouldBindJSON(&req)
+// 	if err != nil {
+// 		h.handleResponse(c, httpapi.BadRequest, err.Error())
+// 		return
+// 	}
 
-	err = h.storage.User().UpdateUserProfile(context.Background(), userId.(string), &req)
-	if err != nil {
-		if err == storage.ErrorNotFound {
-			h.handleResponse(c, httpapi.NoContent, err)
-			return
-		}
-		h.handleResponse(c, httpapi.InternalServerError, err)
-		return
-	}
+// 	err = h.storage.User().UpdateUserProfile(context.Background(), userId.(string), &req)
+// 	if err != nil {
+// 		if err == storage.ErrorNotFound {
+// 			h.handleResponse(c, httpapi.NoContent, err)
+// 			return
+// 		}
+// 		h.handleResponse(c, httpapi.InternalServerError, err)
+// 		return
+// 	}
 
-	h.handleResponse(c, httpapi.OK, "profile updated successfully")
-}
+// 	h.handleResponse(c, httpapi.OK, "profile updated successfully")
+// }
 
 // UpdatePassword godoc
 // @ID update-password
@@ -216,32 +223,32 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 // @Failure 400 {object} httpapi.Response
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
-func (h *Handler) UpdatePassword(c *gin.Context) {
-	userId, exists := c.Get("user_id")
-	if !exists {
-		h.handleResponse(c, httpapi.Unauthorized, "unauthorized")
-		return
-	}
+// func (h *Handler) UpdatePassword(c *gin.Context) {
+// 	userId, exists := c.Get("user_id")
+// 	if !exists {
+// 		h.handleResponse(c, httpapi.Unauthorized, "unauthorized")
+// 		return
+// 	}
 
-	var req models.UpdatePasswordRequest
-	err := c.ShouldBindJSON(&req)
-	if err != nil {
-		h.handleResponse(c, httpapi.BadRequest, err.Error())
-		return
-	}
+// 	var req models.UpdatePasswordRequest
+// 	err := c.ShouldBindJSON(&req)
+// 	if err != nil {
+// 		h.handleResponse(c, httpapi.BadRequest, err.Error())
+// 		return
+// 	}
 
-	err = h.storage.User().UpdatePassword(context.Background(), userId.(string), req.CurrentPassword, req.NewPassword)
-	if err != nil {
-		if err == storage.ErrorNotFound {
-			h.handleResponse(c, httpapi.NoContent, err)
-			return
-		}
-		h.handleResponse(c, httpapi.InternalServerError, err)
-		return
-	}
+// 	err = h.storage.User().UpdatePassword(context.Background(), userId.(string), req.CurrentPassword, req.NewPassword)
+// 	if err != nil {
+// 		if err == storage.ErrorNotFound {
+// 			h.handleResponse(c, httpapi.NoContent, err)
+// 			return
+// 		}
+// 		h.handleResponse(c, httpapi.InternalServerError, err)
+// 		return
+// 	}
 
-	h.handleResponse(c, httpapi.OK, "password updated successfully")
-}
+// 	h.handleResponse(c, httpapi.OK, "password updated successfully")
+// }
 
 
 // DeleteUser godoc
@@ -258,22 +265,22 @@ func (h *Handler) UpdatePassword(c *gin.Context) {
 // @Failure 204 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
 // @Security ApiKeyAuth
-func (h *Handler) DeleteUser(c *gin.Context) {
-	id := c.Param("user_id")
-	if id == "" {
-		h.handleResponse(c, httpapi.BadRequest, "user id required")
-		return
-	}
+// func (h *Handler) DeleteUser(c *gin.Context) {
+// 	id := c.Param("user_id")
+// 	if id == "" {
+// 		h.handleResponse(c, httpapi.BadRequest, "user id required")
+// 		return
+// 	}
 
-	err := h.storage.User().Delete(context.Background(), &models.PrimaryKey{Id: id})
-	if err != nil {
-		if err == storage.ErrorNotFound {
-			h.handleResponse(c, httpapi.NoContent, err)
-			return
-		}
-		h.handleResponse(c, httpapi.InternalServerError, err)
-		return
-	}
+// 	err := h.storage.User().Delete(context.Background(), &models.PrimaryKey{Id: id})
+// 	if err != nil {
+// 		if err == storage.ErrorNotFound {
+// 			h.handleResponse(c, httpapi.NoContent, err)
+// 			return
+// 		}
+// 		h.handleResponse(c, httpapi.InternalServerError, err)
+// 		return
+// 	}
 
-	h.handleResponse(c, httpapi.OK, "successfully deleted")
-}
+// 	h.handleResponse(c, httpapi.OK, "successfully deleted")
+// }
