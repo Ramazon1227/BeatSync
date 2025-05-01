@@ -50,6 +50,7 @@ func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegiste
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("Entity:", entity)
 	// Create data point
 	// data := fmt.Sprintf(
 	// 	"user_info,patient_id=%s,first_name=%s,last_name=%s,password=%s,created_at =%d",
@@ -83,11 +84,14 @@ func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegiste
 
 }
 
-func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models.User, error) {	
+func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 
-    var userData =&models.User{}
+	var userData = &models.User{}
 	queryAPI := (*user.db).QueryAPI(user.Org)
-	query := fmt.Sprintf(`from(bucket: "%s") |> range(start: -10d) |> filter(fn: (r) => r._measurement == "user_info" and r._field == "email" and r.email == "%s")`, user.Bucket, email)
+	query := fmt.Sprintf(`from(bucket: "%s")
+                            |> range(start: -30d)
+                            |> filter(fn: (r) => r._measurement == "user_info" and r.email == "%s")
+                        `, user.Bucket, email)
 
 	result, err := queryAPI.Query(ctx, query)
 	if err != nil {
@@ -95,11 +99,16 @@ func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models
 		return nil, err
 	}
 	defer result.Close()
-   fmt.Println("Query result:", string(result.TablePosition()))
+	fmt.Println("Query result:", string(result.TablePosition()))
 	if result.Next() {
 		record := result.Record()
+		fmt.Println("Record:", record.ValueByKey("patient_id"))
+		fmt.Println("Record:", record.ValueByKey("first_name"))
+		fmt.Println("Record:", record.ValueByKey("last_name"))
+		fmt.Println("Record:", record.ValueByKey("password"))
+		fmt.Println("Record:", record.ValueByKey("created_at"))
 		userData := &models.User{
-			ID:        int(record.ValueByKey("patient_id").(int)),
+			ID:        record.ValueByKey("patient_id").(string),
 			FirstName: record.ValueByKey("first_name").(string),
 			LastName:  record.ValueByKey("last_name").(string),
 			Email:     email,
