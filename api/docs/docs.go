@@ -280,6 +280,9 @@ const docTemplate = `{
                 "influxBucket": {
                     "type": "string"
                 },
+                "influxDatabase": {
+                    "type": "string"
+                },
                 "influxOrg": {
                     "type": "string"
                 },
@@ -401,7 +404,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "last_name": {
                     "type": "string"

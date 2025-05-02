@@ -31,6 +31,7 @@ type Config struct {
 
 	InfluxOrg    string
 	InfluxBucket string
+	InfluxDatabase string
 
 	SecretKey string
 
@@ -66,10 +67,11 @@ func Load() Config {
 	config.HTTPPort = cast.ToString(getOrReturnDefaultValue("HTTP_PORT", ":8080"))
 	config.HTTPScheme = cast.ToString(getOrReturnDefaultValue("HTTP_SCHEME", "http"))
 
-	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "http://localhost:8086"))
-	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "WtNUJsTl0qDSOzQa1OO4mnlaPh1tGOtSC34-LvdAoKzNZNXk9OgkjbyU3W4QMCTxogmsTYk3FLX0JjtBSwqE3A=="))
+	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "https://us-east-1-1.aws.cloud2.influxdata.com"))
+	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "b98bs-_31IV3ukBR6GPKd8HpgAqo1a-v_Kd6XLUT3dsiRre-Vwuir6wFMl9YlHGxgGhXkNiHVUZwqf76gIO9wA=="))
 	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "beatsync"))
 	config.InfluxBucket = cast.ToString(getOrReturnDefaultValue("INFLUX_BUCKET", "beatsync-bucket"))
+	config.InfluxDatabase = cast.ToString(getOrReturnDefaultValue("INFLUX_DATABASE", "beatsync"))
 	
 	config.SecretKey = cast.ToString(getOrReturnDefaultValue("SECRET_KEY", "Here$houldBe$ome$ecretKey"))
 

@@ -35,7 +35,7 @@ func main() {
 	log := logger.NewLogger(cfg.ServiceName, loggerLevel)
 	defer logger.Cleanup(log)
 
-	influxdb, err := influxdb.NewInfluxDB(context.Background(), cfg)
+	influxdb, err := influxdb.NewInfluxDB(context.Background(), &cfg)
 	if err != nil {
 		log.Panic("postgres.NewPostgres", logger.Error(err))
 	}
