@@ -32,33 +32,35 @@ import (
 // @Failure 400 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
 func (h *Handler) RegisterUser(c *gin.Context) {
-    var user models.UserRegisterModel
+	var user models.UserRegisterModel
 
-    err := c.ShouldBindJSON(&user)
-    if err != nil {
-        h.handleResponse(c, httpapi.BadRequest, err)
-        return
-    }
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		h.handleResponse(c, httpapi.BadRequest, err)
+		return
+	}
 
 	if user.Password != user.ConfirmPassword {
 		h.handleResponse(c, httpapi.BadRequest, "passwords do not match")
 		return
 	}
-	
 
-    resp, err := h.storage.User().Create(context.Background(), &user)
-    if err != nil {
-        h.handleResponse(c, httpapi.InternalServerError, err)
-        return
-    }
+	_, err = h.storage.User().GetByEmail(context.Background(), user.Email)
+	if err != storage.ErrorNotFound {
+		h.handleResponse(c, httpapi.InvalidArgument, "user already exists with this email")
+		return
+	}
 
-    status := httpapi.Created
-    status.Description = "user registered successfully"
-    h.handleResponse(c, status, resp)
+	resp, err := h.storage.User().Create(context.Background(), &user)
+	if err != nil {
+		h.handleResponse(c, httpapi.InternalServerError, err)
+		return
+	}
+
+	status := httpapi.Created
+	status.Description = "user registered successfully"
+	h.handleResponse(c, status, resp)
 }
-
-
-
 
 // Login godoc
 // @ID login
@@ -91,7 +93,7 @@ func (h *Handler) Login(c *gin.Context) {
 		h.handleResponse(c, httpapi.InternalServerError, err)
 		return
 	}
-    fmt.Println("User found:", user)
+	fmt.Println("User found:", user)
 	// Check if the password is correct
 	if !utils.CheckPassword(user.Password, req.Password) {
 		h.handleResponse(c, httpapi.Unauthorized, "invalid credentials")
@@ -103,7 +105,7 @@ func (h *Handler) Login(c *gin.Context) {
 		h.handleResponse(c, httpapi.InternalServerError, err)
 		return
 	}
-
+    user.Password = "" // Clear sensitive information
 	h.handleResponse(c, httpapi.OK, &models.LoginResponse{
 		Token:     token,
 		User:      user,
@@ -255,7 +257,6 @@ func (h *Handler) Logout(c *gin.Context) {
 
 // 	h.handleResponse(c, httpapi.OK, "password updated successfully")
 // }
-
 
 // DeleteUser godoc
 // @ID delete-user

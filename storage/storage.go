@@ -12,7 +12,6 @@ type StorageI interface {
 	User() UserRepoI
 }
 
-
 var (
 	ErrorNotFound error = errors.New("not found")
 )

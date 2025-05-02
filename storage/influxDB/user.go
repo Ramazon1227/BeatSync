@@ -3,6 +3,7 @@ package influxdb
 import (
 	"context"
 	"fmt"
+
 	// "log"
 
 	// "hash"
@@ -11,10 +12,11 @@ import (
 	// cfg "github.com/Ramazon1227/BeatSync/config"
 	// logger "github.com/Ramazon1227/BeatSync/pkg/logger"
 	"github.com/Ramazon1227/BeatSync/pkg/utils"
+	"github.com/Ramazon1227/BeatSync/storage"
 
 	"github.com/InfluxCommunity/influxdb3-go/influxdb3"
 	"github.com/Ramazon1227/BeatSync/models"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserRepoImpl struct {
@@ -62,6 +64,7 @@ func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegiste
 func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 
 	var userData = &models.User{}
+	var count int
 	// Execute query
 	query := fmt.Sprintf(`SELECT *
                 FROM "beatsync"
@@ -76,8 +79,9 @@ func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models
 	if err != nil {
 		panic(err)
 	}
-
+	
 	for iterator.Next() {
+		count++
 		value := iterator.Value()
 
 		userData.ID = value["user_id"].(string)
@@ -87,7 +91,9 @@ func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models
 		userData.Password = value["password"].(string)
 		// userData.CreatedAt = time.Unix(0, value["created_at"].(int64))
 	}
-
-
+	if count == 0 {
+		return nil, storage.ErrorNotFound
+	}
+	
 	return userData, nil
 }
