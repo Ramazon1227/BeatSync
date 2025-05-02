@@ -19,7 +19,7 @@ var (
 type UserRepoI interface {
 	Create(ctx context.Context, entity *models.UserRegisterModel) (pKey *models.PrimaryKey, err error)
 	GetByEmail(ctx context.Context, email string) (*models.User, error) // for login
-	// GetById(ctx context.Context, pKey *models.PrimaryKey) (*models.User, error)
+	GetById(ctx context.Context, pKey *models.PrimaryKey) (*models.User, error)
 	// UpdateProfile(ctx context.Context, entity *models.User) error
 	// UpdatePassword(ctx context.Context, userId string, currentPassword, newPassword string) error
 	// Delete(ctx context.Context, pKey *models.PrimaryKey) error

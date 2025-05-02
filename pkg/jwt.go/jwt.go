@@ -17,6 +17,7 @@ func GenerateToken(user *models.User) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
+	claims["user_id"] = user.ID
 	claims["first_name"] = user.FirstName
 	claims["last_name"] = user.LastName
 	// claims["role"] = user.Role

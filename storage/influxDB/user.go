@@ -32,7 +32,7 @@ func NewUserRepoI(client *influxdb3.Client) *UserRepoImpl {
 
 func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegisterModel) (pKey *models.PrimaryKey, err error) {
 
-	patientID := uuid.NewV4().String()
+	userID := uuid.NewV4().String()
 	hashedPassword, err := utils.HashPassword(entity.Password)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegiste
 	}
 
 	point := influxdb3.NewPointWithMeasurement("beatsync").
-		SetTag("user_id", patientID).
+		SetTag("user_id", userID).
 		SetTag("email", entity.Email).
 		SetField("first_name", entity.FirstName).
 		SetField("last_name", entity.LastName).
@@ -56,7 +56,7 @@ func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegiste
 	}
 
 	return &models.PrimaryKey{
-		Id: patientID,
+		Id: userID,
 	}, nil
 
 }
@@ -90,6 +90,84 @@ func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models
 		userData.Email = value["email"].(string)
 		userData.Password = value["password"].(string)
 		// userData.CreatedAt = time.Unix(0, value["created_at"].(int64))
+	}
+	if count == 0 {
+		return nil, storage.ErrorNotFound
+	}
+	
+	return userData, nil
+}
+
+
+func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey) (*models.User, error) {
+
+	var userData = &models.User{}
+	var count int
+	// Execute query
+	query := fmt.Sprintf(`SELECT *
+                FROM "beatsync"
+                WHERE "user_id" = '%s'
+				LIMIT 1`, entity.Id)
+
+	queryOptions := influxdb3.QueryOptions{
+		Database: "beatsync",
+	}
+	iterator, err := user.db.QueryWithOptions(context.Background(), &queryOptions, query)
+
+	if err != nil {
+		panic(err)
+	}
+	
+	for iterator.Next() {
+		count++
+		value := iterator.Value()
+        _,ok:= value["user_id"]
+		if ok {
+			userData.ID = value["user_id"].(string)
+		}
+	
+		_,ok = value["first_name"]
+		if ok {
+			userData.FirstName = value["first_name"].(string)
+		}
+
+		_,ok = value["last_name"]
+		if ok {
+			userData.LastName = value["last_name"].(string)
+		}
+
+		// userData.Email = value["email"].(string)
+		_,ok = value["email"]
+		if ok {
+			userData.Email = value["email"].(string)
+		}
+		// userData.Password = value["password"].(string)
+		// userData.Phone = value["phone"].(string)
+		_,ok = value["phone"]
+		if ok {
+			userData.Phone = value["phone"].(string)
+		}
+		// userData.Gender = value["gender"].(string)
+		_,ok = value["gender"]
+		if ok {
+			userData.Gender = value["gender"].(string)
+		}
+		// userData.Age = value["age"].(int)
+		_,ok = value["age"]
+		if ok {
+			userData.Age = value["age"].(int)
+		}
+		// userData.Height = value["height"].(float32)
+		_,ok = value["height"]
+		if ok {
+			userData.Height = value["height"].(float32)
+		}
+		// userData.Weight = value["weight"].(float32)
+		_,ok = value["weight"]
+		if ok {
+			userData.Weight = value["weight"].(float32)
+		}
+	
 	}
 	if count == 0 {
 		return nil, storage.ErrorNotFound

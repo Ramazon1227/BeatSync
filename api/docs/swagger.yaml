@@ -295,6 +295,32 @@ paths:
       summary: Register User
       tags:
       - auth
+  /v1/profile:
+    get:
+      consumes:
+      - application/json
+      description: Get authenticated user's profile information
+      operationId: get-profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User Profile
+      tags:
+      - profile
 securityDefinitions:
   ApiKeyAuth:
     description: Enter the token with Bearer prefix, e.g. "Bearer abcde12345"

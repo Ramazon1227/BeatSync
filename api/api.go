@@ -76,6 +76,12 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 			// auth.POST("/refresh", h.RefreshToken)
 		}
 
+		// Profile routes
+		profile := v1.Group("/profile")
+		{
+			profile.GET("/", h.GetProfile)
+		}
+
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
@@ -98,4 +104,3 @@ func customCORSMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
-

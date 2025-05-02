@@ -157,24 +157,30 @@ func (h *Handler) Logout(c *gin.Context) {
 // @Success 200 {object} models.User
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
-// func (h *Handler) GetProfile(c *gin.Context) {
-//     userId, exists := c.Get("user_id")
-//     if !exists {
-//         h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
-//         return
-//     }
+func (h *Handler) GetProfile(c *gin.Context) {
 
-//     user, err := h.storage.User().GetById(context.Background(), &models.PrimaryKey{Id: userId.(string)})
-//     if err != nil {
-//         h.handleResponse(c, httpapi.InternalServerError, err)
-//         return
-//     }
+    // Extract user ID from JWT token
+    claims ,err:= jwt.ExtractClaims(c.Request.Header.Get("Authorization"))
+	if  err != nil {	
+		h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+        return
+	}
+	userId, exists := claims["user_id"]
+	if !exists {
+		h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+		return
+	}
+    user, err := h.storage.User().GetById(context.Background(), &models.PrimaryKey{Id: userId.(string)})
+    if err != nil {
+        h.handleResponse(c, httpapi.InternalServerError, err)
+        return
+    }
 
-//     // Clear sensitive information
-//     user.Password = ""
+    // Clear sensitive information
+    user.Password = ""
 
-//     c.JSON(httpapi.OK.Code, user)
-// }
+    c.JSON(httpapi.OK.Code, user)
+}
 
 // UpdateProfile godoc
 // @ID update-profile
