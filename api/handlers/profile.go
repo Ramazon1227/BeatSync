@@ -44,6 +44,7 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		h.handleResponse(c, httpapi.BadRequest, "passwords do not match")
 		return
 	}
+	
 
     resp, err := h.storage.User().Create(context.Background(), &user)
     if err != nil {

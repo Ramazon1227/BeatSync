@@ -67,8 +67,8 @@ func Load() Config {
 	config.HTTPPort = cast.ToString(getOrReturnDefaultValue("HTTP_PORT", ":8080"))
 	config.HTTPScheme = cast.ToString(getOrReturnDefaultValue("HTTP_SCHEME", "http"))
 
-	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "https://us-east-1-1.aws.cloud2.influxdata.com"))
-	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "b98bs-_31IV3ukBR6GPKd8HpgAqo1a-v_Kd6XLUT3dsiRre-Vwuir6wFMl9YlHGxgGhXkNiHVUZwqf76gIO9wA=="))
+	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "localhost:8086"))
+	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "your-influx-token"))
 	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "beatsync"))
 	config.InfluxBucket = cast.ToString(getOrReturnDefaultValue("INFLUX_BUCKET", "beatsync-bucket"))
 	config.InfluxDatabase = cast.ToString(getOrReturnDefaultValue("INFLUX_DATABASE", "beatsync"))

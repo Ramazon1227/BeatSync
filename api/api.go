@@ -61,18 +61,20 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 	v1 := api.Group("/v1")
 	{
 		// User
-		v1.POST("auth/register", h.RegisterUser)
-		v1.POST("auth/login", h.Login)
+		// v1.POST("auth/register", h.RegisterUser)
+		// v1.POST("auth/login", h.Login)
 		// v1.GET("user", h.GetUserList)
 		// v1.PUT("user/:user_id", h.UpdateUser)
 		// v1.DELETE("user/:user_id", h.DeleteUser)
 
 		// Auth routes
-		// auth := v1.Group("/auth")
-		// {
-		// 	// auth.POST("/login", h.Login)
-		// 	// auth.POST("/logout", h.Logout)
-		// }
+		auth := v1.Group("/auth")
+		{
+			auth.POST("/login", h.Login)
+			auth.POST("/logout", h.Logout)
+			auth.POST("/register", h.RegisterUser)
+			// auth.POST("/refresh", h.RefreshToken)
+		}
 
 	}
 
