@@ -11,6 +11,7 @@ import (
 
 	// cfg "github.com/Ramazon1227/BeatSync/config"
 	// logger "github.com/Ramazon1227/BeatSync/pkg/logger"
+	"github.com/Ramazon1227/BeatSync/pkg/influxdb"
 	"github.com/Ramazon1227/BeatSync/pkg/utils"
 	"github.com/Ramazon1227/BeatSync/storage"
 
@@ -43,7 +44,7 @@ func (user *UserRepoImpl) Create(ctx context.Context, entity *models.UserRegiste
 		Database: "beatsync",
 	}
 
-	point := influxdb3.NewPointWithMeasurement("beatsync").
+	point := influxdb3.NewPointWithMeasurement("user_info").
 		SetTag("user_id", userID).
 		SetTag("email", entity.Email).
 		SetField("first_name", entity.FirstName).
@@ -67,7 +68,7 @@ func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models
 	var count int
 	// Execute query
 	query := fmt.Sprintf(`SELECT *
-                FROM "beatsync"
+                FROM "user_info"
                 WHERE "email" = '%s'
 				LIMIT 1`, email)
 
@@ -105,7 +106,7 @@ func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey
 	var count int
 	// Execute query
 	query := fmt.Sprintf(`SELECT *
-                FROM "beatsync"
+                FROM "user_info"
                 WHERE "user_id" = '%s'
 				LIMIT 1`, entity.Id)
 
@@ -174,4 +175,14 @@ func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey
 	}
 	
 	return userData, nil
+}
+
+func (user *UserRepoImpl) Delete(ctx context.Context, entity *models.PrimaryKey) (error) {
+
+	err:= influxdb.DeleteUser(ctx,entity.Id)
+	if err != nil {
+		return err
+	}
+		
+	return  nil
 }
