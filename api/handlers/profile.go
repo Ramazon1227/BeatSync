@@ -148,15 +148,15 @@ func (h *Handler) Logout(c *gin.Context) {
 // GetProfile godoc
 // @ID get-profile
 // @Router /v1/profile [GET]
-// @Summary Get User Profile
-// @Description Get authenticated user's profile information
+// @Summary Get Profile
+// @Description Retrieve the profile of the authenticated user
 // @Tags profile
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
 // @Success 200 {object} models.User
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
+// @Security ApiKeyAuth
 func (h *Handler) GetProfile(c *gin.Context) {
 
     // Extract user ID from JWT token

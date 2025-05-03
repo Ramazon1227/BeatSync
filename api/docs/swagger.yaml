@@ -299,7 +299,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get authenticated user's profile information
+      description: Retrieve the profile of the authenticated user
       operationId: get-profile
       produces:
       - application/json
@@ -318,12 +318,12 @@ paths:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get User Profile
+      summary: Get Profile
       tags:
       - profile
 securityDefinitions:
   ApiKeyAuth:
-    description: Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
+    description: Enter the token , e.g. "abcde12345"
     in: header
     name: Authorization
     type: apiKey

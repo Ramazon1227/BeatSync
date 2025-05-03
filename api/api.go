@@ -29,7 +29,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-// @description Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
+// @description Enter the token , e.g. "abcde12345"
 
 // @security ApiKeyAuth
 
@@ -79,7 +79,7 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 		// Profile routes
 		profile := v1.Group("/profile")
 		{
-			profile.GET("/", h.GetProfile)
+			profile.GET("", h.GetProfile)
 		}
 
 	}

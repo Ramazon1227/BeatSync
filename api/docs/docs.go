@@ -263,7 +263,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get authenticated user's profile information",
+                "description": "Retrieve the profile of the authenticated user",
                 "consumes": [
                     "application/json"
                 ],
@@ -273,7 +273,7 @@ const docTemplate = `{
                 "tags": [
                     "profile"
                 ],
-                "summary": "Get User Profile",
+                "summary": "Get Profile",
                 "operationId": "get-profile",
                 "responses": {
                     "200": {
@@ -499,7 +499,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
-            "description": "Enter the token with Bearer prefix, e.g. \"Bearer abcde12345\"",
+            "description": "Enter the token , e.g. \"abcde12345\"",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
