@@ -3,6 +3,7 @@ package influxdb
 import (
 	"context"
 	"fmt"
+	"log"
 
 	// "log"
 
@@ -10,7 +11,6 @@ import (
 	"time"
 
 	// cfg "github.com/Ramazon1227/BeatSync/config"
-	// logger "github.com/Ramazon1227/BeatSync/pkg/logger"
 	"github.com/Ramazon1227/BeatSync/pkg/influxdb"
 	"github.com/Ramazon1227/BeatSync/pkg/utils"
 	"github.com/Ramazon1227/BeatSync/storage"
@@ -99,7 +99,6 @@ func (user *UserRepoImpl) GetByEmail(ctx context.Context, email string) (*models
 	return userData, nil
 }
 
-
 func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey) (*models.User, error) {
 
 	var userData = &models.User{}
@@ -177,9 +176,55 @@ func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey
 	return userData, nil
 }
 
-func (user *UserRepoImpl) Delete(ctx context.Context, entity *models.PrimaryKey) (error) {
 
-	err:= influxdb.DeleteUser(ctx,entity.Id)
+func (user *UserRepoImpl) UpdateProfile(ctx context.Context, entity *models.UpdateProfileRequest) (pKey *models.PrimaryKey, err error) {
+
+    // first get the user by ID we should get password and id 
+	userData, err := user.GetById(ctx, &models.PrimaryKey{Id: entity.ID})
+	if err != nil {
+		log.Fatal("Error getting user by ID: ", err)
+		return nil, err
+	}
+	
+	fmt.Println("Entity:", entity)
+	// delete the user by ID
+	err = user.Delete(ctx, userData.Email)
+	if err != nil {
+		log.Fatal("Error deleting user: ", err)
+		return nil, err
+	}
+
+	options := influxdb3.WriteOptions{
+		Database: "beatsync",
+	}
+
+	point := influxdb3.NewPointWithMeasurement("user_info").
+		SetTag("user_id", entity.ID).
+		SetTag("email", userData.Email).
+		SetField("first_name", entity.FirstName).
+		SetField("last_name", entity.LastName).
+		SetField("password", userData.Password).
+		SetField("phone", entity.Phone).
+		SetField("gender", entity.Gender).
+		SetField("age", entity.Age).
+		SetField("height", entity.Height).
+		SetField("weight", entity.Weight).
+		SetField("created_at", userData.CreatedAt).
+		SetField("updated_at", time.Now().UnixNano())
+
+	if err := user.db.WritePointsWithOptions(context.Background(), &options, point); err != nil {
+		panic(err)
+	}
+
+	return &models.PrimaryKey{
+		Id: entity.ID,
+	}, nil
+
+}
+
+func (user *UserRepoImpl) Delete(ctx context.Context, email string) (error) {
+
+	err:= influxdb.DeleteUser(ctx, email)
 	if err != nil {
 		return err
 	}

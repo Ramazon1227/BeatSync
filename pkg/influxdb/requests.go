@@ -11,7 +11,7 @@ import (
 	"github.com/Ramazon1227/BeatSync/config"
 )
 
-func DeleteUser(ctx context.Context,userId string) error{
+func DeleteUser(ctx context.Context,email string) error{
     // Define your InfluxDB parameters
 	cfg:= config.Load()
 	influxURL := cfg.InfluxURL // Replace with your InfluxDB URL
@@ -24,7 +24,7 @@ func DeleteUser(ctx context.Context,userId string) error{
     stop := time.Now().Format(time.RFC3339)
 
     // Define the predicate for deletion
-    predicate := fmt.Sprintf(`_measurement="user_info" AND user_id="%s"`, userId)
+    predicate := fmt.Sprintf(`_measurement=\"user_info\" AND email=\"%s\"`, email)
 
     // Construct the delete request body
     deleteBody := fmt.Sprintf(`{
@@ -42,7 +42,7 @@ func DeleteUser(ctx context.Context,userId string) error{
     // Set the appropriate headers
     req.Header.Set("Authorization", "Token "+token)
     req.Header.Set("Content-Type", "application/json")
-
+    fmt.Println("Request:", req)
     // Execute the request
     client := &http.Client{Timeout: 10 * time.Second}
     resp, err := client.Do(req)

@@ -147,18 +147,24 @@ func (h *Handler) Logout(c *gin.Context) {
 
 // GetProfile godoc
 // @ID get-profile
-// @Router /v1/profile [GET]
+// @Router /v1/profile/{user_id} [GET]
 // @Summary Get Profile
 // @Description Retrieve the profile of the authenticated user
 // @Tags profile
 // @Accept json
 // @Produce json
+// @Param user_id path string true "User ID"
 // @Success 200 {object} models.User
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
 // @Security ApiKeyAuth
 func (h *Handler) GetProfile(c *gin.Context) {
-
+	// Get user ID from URL parameter
+	// userId := c.Param("user_id")
+	// if userId == "" {
+	// 	h.handleResponse(c, httpapi.BadRequest, "user id required")
+	// 	return
+	// }
     // Extract user ID from JWT token
     claims ,err:= jwt.ExtractClaims(c.Request.Header.Get("Authorization"))
 	if  err != nil {	
@@ -184,44 +190,45 @@ func (h *Handler) GetProfile(c *gin.Context) {
 
 // UpdateProfile godoc
 // @ID update-profile
-// @Router /v1/profile [PUT]
+// @Router /v1/profile/{user_id} [PUT]
 // @Summary Update User Profile
 // @Description Update authenticated user's profile
 // @Tags profile
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
+// @Param user_id path string true "User ID"
 // @Param profile body models.UpdateProfileRequest true "profile data"
 // @Success 200 {object} httpapi.Response
 // @Failure 400 {object} httpapi.Response
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
-// func (h *Handler) UpdateProfile(c *gin.Context) {
-// 	userId, exists := c.Get("user_id")
-// 	if !exists {
-// 		h.handleResponse(c, httpapi.Unauthorized, "unauthorized")
-// 		return
-// 	}
+func (h *Handler) UpdateProfile(c *gin.Context) {
+	userId:= c.Param("user_id")
+	if userId == "" {
+		h.handleResponse(c, httpapi.BadRequest, "Bad Request : user id required")
+		return
+	}
 
-// 	var req models.UpdateProfileRequest
-// 	err := c.ShouldBindJSON(&req)
-// 	if err != nil {
-// 		h.handleResponse(c, httpapi.BadRequest, err.Error())
-// 		return
-// 	}
+	var req models.UpdateProfileRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		h.handleResponse(c, httpapi.BadRequest, err.Error())
+		return
+	}
+    req.ID = userId
+	resp, err := h.storage.User().UpdateProfile(context.Background(), &req)
+	if err != nil {
+		if err == storage.ErrorNotFound {
+			h.handleResponse(c, httpapi.NoContent, err)
+			return
+		}
+		h.handleResponse(c, httpapi.InternalServerError, err)
+		return
+	}
 
-// 	err = h.storage.User().UpdateUserProfile(context.Background(), userId.(string), &req)
-// 	if err != nil {
-// 		if err == storage.ErrorNotFound {
-// 			h.handleResponse(c, httpapi.NoContent, err)
-// 			return
-// 		}
-// 		h.handleResponse(c, httpapi.InternalServerError, err)
-// 		return
-// 	}
-
-// 	h.handleResponse(c, httpapi.OK, "profile updated successfully")
-// }
+	h.handleResponse(c, httpapi.OK, resp)
+}
 
 // UpdatePassword godoc
 // @ID update-password

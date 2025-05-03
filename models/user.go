@@ -5,12 +5,12 @@ import (
 )
 
 type User struct {
-	ID        string        `json:"id"`
+	ID        string     `json:"id"`
 	FirstName string     `json:"first_name"`
 	LastName  string     `json:"last_name"`
 	Email     string     `json:"email"`
 	Password  string     `json:"password"`
-	Role      string     `json:"role"`
+	// Role      string     `json:"role"`
 	Phone     string     `json:"phone"`
 	Gender    string     `json:"gender"`
 	Age       int        `json:"age"`
@@ -26,4 +26,16 @@ type UserRegisterModel struct {
 	Email           string `json:"email" binding:"required,email"`
 	Password        string `json:"password" binding:"required,min=8"`
 	ConfirmPassword string `json:"confirm_password" binding:"required,min=8"`
+}
+
+type UpdateProfileRequest struct {
+	ID        string  `json:"id"`
+	FirstName string  `json:"first_name"`
+	LastName  string  `json:"last_name"`
+	// Role      string  `json:"role"`
+	Phone     string  `json:"phone"`
+	Gender    string  `json:"gender"`
+	Age       int     `json:"age"`
+	Weight    float32 `json:"weight"`
+	Height    float32 `json:"height"`
 }

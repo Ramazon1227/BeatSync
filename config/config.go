@@ -69,7 +69,7 @@ func Load() Config {
 
 	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "localhost:8086"))
 	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "your-influx-token"))
-	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "beatsync"))
+	config.InfluxOrg = cast.ToString(getOrReturnDefaultValue("INFLUX_ORG", "Staging"))
 	config.InfluxBucket = cast.ToString(getOrReturnDefaultValue("INFLUX_BUCKET", "beatsync-bucket"))
 	config.InfluxDatabase = cast.ToString(getOrReturnDefaultValue("INFLUX_DATABASE", "beatsync"))
 	

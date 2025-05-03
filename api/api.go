@@ -79,7 +79,8 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 		// Profile routes
 		profile := v1.Group("/profile")
 		{
-			profile.GET("", h.GetProfile)
+			profile.GET("/:user_id", h.GetProfile)
+			profile.PUT("/:user_id", h.UpdateProfile)
 		}
 
 	}

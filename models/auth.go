@@ -16,11 +16,6 @@ type LogoutRequest struct {
 	Token string `json:"token" binding:"required"`
 }
 
-type UpdateProfileRequest struct {
-	Name     string `json:"name,omitempty" example:"John Doe"`
-	Email    string `json:"email,omitempty" example:"john@example.com"`
-	Phone    string `json:"phone,omitempty" example:"+1234567890"`
-}
 
 type UpdatePasswordRequest struct {
 	CurrentPassword string `json:"current_password" binding:"required" example:"oldpassword123"`
