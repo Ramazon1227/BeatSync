@@ -24,3 +24,8 @@ type UserRepoI interface {
 	// UpdatePassword(ctx context.Context, userId string, currentPassword, newPassword string) error
 	Delete(ctx context.Context, email string) error
 }
+
+type AnalyzeRepoI interface {
+
+	SaveSensorData(ctx context.Context, entity *models.SensorData) (pKey *models.PrimaryKey, err error)
+}

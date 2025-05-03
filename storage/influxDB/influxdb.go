@@ -14,6 +14,7 @@ import (
 type Store struct {
 	db   *influxdb3.Client
 	user storage.UserRepoI
+	analyze storage.AnalyzeRepoI
 }
 
 func (s *Store) CloseDB() {
