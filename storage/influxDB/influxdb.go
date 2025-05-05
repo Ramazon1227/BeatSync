@@ -45,3 +45,10 @@ func (s *Store) User() storage.UserRepoI{
 
 	return s.user
 }
+func (s *Store) Analyse() storage.AnalyzeRepoI{
+	if s.analyze == nil {
+		s.analyze = NewAnalyzeRepo(s.db)
+	}
+
+	return s.analyze
+}

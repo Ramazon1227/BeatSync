@@ -10,6 +10,7 @@ import (
 type StorageI interface {
 	CloseDB()
 	User() UserRepoI
+	Analyse() AnalyzeRepoI
 }
 
 var (
@@ -26,6 +27,8 @@ type UserRepoI interface {
 }
 
 type AnalyzeRepoI interface {
-
 	SaveSensorData(ctx context.Context, entity *models.SensorData) (pKey *models.PrimaryKey, err error)
+	SaveAnalysis(ctx context.Context, entity *models.SensorData) (pkey *models.PrimaryKey, err error)
+	GetAnalysisByID(ctx context.Context, pKey *models.PrimaryKey) (*models.HRVAnalysisResult, error)
+	GetUserAnalysis(ctx context.Context, userID, startDate, endDate string) (*models.UserHRVAnalysisResponse, error)
 }

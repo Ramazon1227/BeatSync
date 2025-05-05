@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"strconv"
+	"time"
 
 	"github.com/Ramazon1227/BeatSync/api/http"
 	"github.com/Ramazon1227/BeatSync/config"
@@ -61,12 +61,18 @@ func (h *Handler) handleResponse(c *gin.Context, status http.Status, data interf
 	})
 }
 
-func (h *Handler) getOffsetParam(c *gin.Context) (offset int, err error) {
-	offsetStr := c.DefaultQuery("offset", h.cfg.DefaultOffset)
-	return strconv.Atoi(offsetStr)
+func (h *Handler) getStartDateParam(c *gin.Context) (startDate string, err error) {
+	startDateStr := c.DefaultQuery("start_date", time.Now().AddDate(0,0,-7).Format("2006-01-02"))
+	if _, err := time.Parse("2006-01-02", startDateStr); err != nil {
+		return "", err
+	}
+	return startDateStr, nil
 }
 
-func (h *Handler) getLimitParam(c *gin.Context) (offset int, err error) {
-	offsetStr := c.DefaultQuery("limit", h.cfg.DefaultLimit)
-	return strconv.Atoi(offsetStr)
+func (h *Handler) getEndDateParam(c *gin.Context) (endDate string, err error) {
+	endDateStr := c.DefaultQuery("end_date", time.Now().Format("2006-01-02"))
+	if _, err := time.Parse("2006-01-02", endDateStr); err != nil {
+		return "", err
+	}
+	return endDateStr, nil
 }

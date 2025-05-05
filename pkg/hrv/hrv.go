@@ -68,11 +68,6 @@ func CalculateSD1SD2(rr []float64) (float64, float64) {
 	return sd1, sd2
 }
 
-// Placeholder for LF, HF, VLF, and LF/HF (you'll need FFT or Lomb-Scargle for actual values)
-func CalculateFrequencyDomain(rr []float64) (lf, hf, vlf, lfHfRatio float64) {
-	// Stub — real implementation needs spectral analysis
-	return 0, 0, 0, 0
-}
 
 // --- Helper Functions ---
 
@@ -92,7 +87,6 @@ func stddev(data []float64) float64 {
 	}
 	return math.Sqrt(sum / float64(len(data)))
 }
-
 
 
 // Extract RR intervals from PPG data (in milliseconds)
@@ -121,7 +115,7 @@ func ExtractRR(ppg []*models.PPGData, minPeakDistanceMs int, minPeakHeight float
 }
 
 
-func CalculateFrequencyDomainPrecise(rr []float64) (lf, hf, vlf, lfHfRatio float64) {
+func CalculateFrequencyDomain(rr []float64) (lf, hf, vlf, lfHfRatio float64) {
 	n := len(rr)
 	if n < 2 {
 		fmt.Println("Warning: Not enough RR intervals for frequency domain analysis.")
