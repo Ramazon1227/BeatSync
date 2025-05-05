@@ -10,7 +10,7 @@ import (
 
 	httpapi "github.com/Ramazon1227/BeatSync/api/http"
 	"github.com/Ramazon1227/BeatSync/models"
-	"github.com/Ramazon1227/BeatSync/pkg/jwt.go"
+	"github.com/Ramazon1227/BeatSync/pkg/jwt"
 	"github.com/Ramazon1227/BeatSync/pkg/utils"
 	"github.com/Ramazon1227/BeatSync/storage"
 
@@ -147,7 +147,7 @@ func (h *Handler) Logout(c *gin.Context) {
 
 // GetProfile godoc
 // @ID get-profile
-// @Router /v1/profile/{user_id} [GET]
+// @Router /v1/profile [GET]
 // @Summary Get Profile
 // @Description Retrieve the profile of the authenticated user
 // @Tags profile
@@ -159,23 +159,17 @@ func (h *Handler) Logout(c *gin.Context) {
 // @Failure 500 {object} httpapi.Response
 // @Security ApiKeyAuth
 func (h *Handler) GetProfile(c *gin.Context) {
-	// Get user ID from URL parameter
-	// userId := c.Param("user_id")
-	// if userId == "" {
-	// 	h.handleResponse(c, httpapi.BadRequest, "user id required")
-	// 	return
-	// }
-    // Extract user ID from JWT token
-    claims ,err:= jwt.ExtractClaims(c.Request.Header.Get("Authorization"))
-	if  err != nil {	
-		h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
-        return
-	}
-	userId, exists := claims["user_id"]
+	// Get user ID from jwt token
+	userId, exists:= c.Get("user_id")
 	if !exists {
 		h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
 		return
 	}
+	if userId == "" {
+		h.handleResponse(c, httpapi.BadRequest, "user id required")
+		return
+	}
+   
     user, err := h.storage.User().GetById(context.Background(), &models.PrimaryKey{Id: userId.(string)})
     if err != nil {
         h.handleResponse(c, httpapi.InternalServerError, err)
@@ -190,7 +184,7 @@ func (h *Handler) GetProfile(c *gin.Context) {
 
 // UpdateProfile godoc
 // @ID update-profile
-// @Router /v1/profile/{user_id} [PUT]
+// @Router /v1/profile [PUT]
 // @Summary Update User Profile
 // @Description Update authenticated user's profile
 // @Tags profile
@@ -204,9 +198,13 @@ func (h *Handler) GetProfile(c *gin.Context) {
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
 func (h *Handler) UpdateProfile(c *gin.Context) {
-	userId:= c.Param("user_id")
+	userId, exists:= c.Get("user_id")
+	if !exists {
+		h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+		return
+	}
 	if userId == "" {
-		h.handleResponse(c, httpapi.BadRequest, "Bad Request : user id required")
+		h.handleResponse(c, httpapi.BadRequest, "user id required")
 		return
 	}
 
@@ -216,7 +214,7 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 		h.handleResponse(c, httpapi.BadRequest, err.Error())
 		return
 	}
-    req.ID = userId
+    req.ID = userId.( string)
 	resp, err := h.storage.User().UpdateProfile(context.Background(), &req)
 	if err != nil {
 		if err == storage.ErrorNotFound {
@@ -247,20 +245,18 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 // @Failure 500 {object} httpapi.Response
 func (h *Handler) UpdatePassword(c *gin.Context) {
     // Extract user ID from JWT token
-    claims, err := jwt.ExtractClaims(c.Request.Header.Get("Authorization"))
-    if err != nil {
-        h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
-        return
-    }
-
-    userId, exists := claims["user_id"]
-    if !exists {
-        h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
-        return
-    }
+	userId, exists:= c.Get("user_id")
+	if !exists {
+		h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+		return
+	}
+	if userId == "" {
+		h.handleResponse(c, httpapi.BadRequest, "user id required")
+		return
+	}
 
     var req models.UpdatePasswordRequest
-    err = c.ShouldBindJSON(&req)
+    err := c.ShouldBindJSON(&req)
     if err != nil {
         h.handleResponse(c, httpapi.BadRequest, err.Error())
         return

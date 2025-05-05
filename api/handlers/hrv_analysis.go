@@ -96,7 +96,7 @@ func (h *Handler) GetAnalysisByID(c *gin.Context) {
 
 // GetUserAnalysis godoc
 // @ID get-user-analysis
-// @Router /v1/user-analysis/{user_id} [GET]
+// @Router /v1/user-analysis [GET]
 // @Summary Get User Analysis
 // @Description Retrieve all analysis data for a specific user within a date range
 // @Tags data
@@ -109,7 +109,11 @@ func (h *Handler) GetAnalysisByID(c *gin.Context) {
 // @Failure 400 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
 func (h *Handler) GetUserAnalysis(c *gin.Context) {
-    userID := c.Param("user_id")
+    userID,exists := c.Get("user_id")
+    if !exists {
+        h.handleResponse(c, httpapi.Unauthorized, "User ID not found in context")
+        return
+    }
     if userID == "" {
         h.handleResponse(c, httpapi.BadRequest, "User ID is required")
         return
@@ -138,7 +142,7 @@ func (h *Handler) GetUserAnalysis(c *gin.Context) {
     }
 
     // Fetch analysis data with optional date filters
-    analysisResp, err := h.storage.Analyse().GetUserAnalysis(context.Background(), userID, startDate, endDate)
+    analysisResp, err := h.storage.Analyse().GetUserAnalysis(context.Background(), userID.(string), startDate, endDate)
     if err != nil {
         h.handleResponse(c, httpapi.InternalServerError, err)
         return

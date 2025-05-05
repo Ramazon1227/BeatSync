@@ -3,6 +3,8 @@ package api
 import (
 	docs "github.com/Ramazon1227/BeatSync/api/docs"
 	"github.com/Ramazon1227/BeatSync/api/handlers"
+	"github.com/Ramazon1227/BeatSync/api/middleware"
+
 	// "github.com/Ramazon1227/BeatSync/api/middleware"
 	"github.com/Ramazon1227/BeatSync/config"
 
@@ -29,7 +31,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-// @description Enter the token , e.g. "abcde12345"
+// @description Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
 
 // @security ApiKeyAuth
 
@@ -69,18 +71,20 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 			auth.POST("/register", h.RegisterUser)
 			// auth.POST("/refresh", h.RefreshToken)
 		}
-
+        protected:=v1.Group("")
+		protected.Use(middleware.AuthMiddleware())
 		// Profile routes
-		profile := v1.Group("/profile")
+		profile := protected.Group("/profile")
+		profile.Use(middleware.AuthMiddleware())
 		{
 			profile.GET("/:user_id", h.GetProfile)
 			profile.PUT("/:user_id", h.UpdateProfile)
 			profile.PUT("/password", h.UpdatePassword)
 		}
         
-		v1.POST("sensor-data", h.SaveSensorData)
-		v1.GET("analysis/:analysis_id", h.GetAnalysisByID)
-		v1.GET("user-analysis/:user_id", h.GetUserAnalysis)
+		protected.POST("sensor-data", h.SaveSensorData)
+		protected.GET("analysis/:analysis_id", h.GetAnalysisByID)
+		protected.GET("user-analysis/:user_id", h.GetUserAnalysis)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
