@@ -137,7 +137,7 @@ definitions:
       sensor_data_id:
         description: Unique identifier for the sensor data
         type: string
-      time:
+      timestamp:
         description: Timestamp of the reading
         type: string
       user_id:
@@ -145,7 +145,7 @@ definitions:
         type: string
     required:
     - data
-    - time
+    - timestamp
     - user_id
     type: object
   models.UpdatePasswordRequest:
@@ -330,6 +330,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Get Analysis By ID
       tags:
       - data
@@ -400,6 +402,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Logout User
       tags:
       - auth
@@ -572,10 +576,12 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Save Sensor Data
       tags:
       - data
-  /v1/user-analysis/{user_id}:
+  /v1/user-analysis:
     get:
       consumes:
       - application/json
@@ -612,12 +618,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
       summary: Get User Analysis
       tags:
       - data
 securityDefinitions:
   ApiKeyAuth:
-    description: Enter the token , e.g. "abcde12345"
+    description: Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
     in: header
     name: Authorization
     type: apiKey

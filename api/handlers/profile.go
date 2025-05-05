@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	// "fmt"
 	// "fmt"
@@ -20,17 +21,17 @@ import (
 )
 
 // RegisterUser godoc
-// @ID register-user
-// @Router /v1/auth/register [POST]
-// @Summary Register User
-// @Description Register a new user
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param user body models.UserRegisterModel true "user registration data"
-// @Success 201 {object} models.User
-// @Failure 400 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
+//	@ID				register-user
+//	@Router			/v1/auth/register [POST]
+//	@Summary		Register User
+//	@Description	Register a new user
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		models.UserRegisterModel	true	"user registration data"
+//	@Success		201		{object}	models.User
+//	@Failure		400		{object}	httpapi.Response
+//	@Failure		500		{object}	httpapi.Response
 func (h *Handler) RegisterUser(c *gin.Context) {
 	var user models.UserRegisterModel
 
@@ -63,18 +64,18 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 }
 
 // Login godoc
-// @ID login
-// @Router /v1/auth/login [POST]
-// @Summary Login User
-// @Description Authenticate user and return JWT token
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param login body models.LoginRequest true "login credentials"
-// @Success 200 {object} models.LoginResponse
-// @Failure 400 {object} httpapi.Response
-// @Failure 401 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
+//	@ID				login
+//	@Router			/v1/auth/login [POST]
+//	@Summary		Login User
+//	@Description	Authenticate user and return JWT token
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			login	body		models.LoginRequest	true	"login credentials"
+//	@Success		200		{object}	models.LoginResponse
+//	@Failure		400		{object}	httpapi.Response
+//	@Failure		401		{object}	httpapi.Response
+//	@Failure		500		{object}	httpapi.Response
 func (h *Handler) Login(c *gin.Context) {
 	var req models.LoginRequest
 
@@ -114,29 +115,42 @@ func (h *Handler) Login(c *gin.Context) {
 }
 
 // Logout godoc
-// @ID logout
-// @Router /v1/auth/logout [POST]
-// @Summary Logout User
-// @Description Invalidate user's JWT token
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param logout body models.LogoutRequest true "logout request"
-// @Success 200 {object} httpapi.Response
-// @Failure 400 {object} httpapi.Response
-// @Failure 401 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
+//	@ID				logout
+//	@Router			/v1/auth/logout [POST]
+//	@Summary		Logout User
+//	@Description	Invalidate user's JWT token
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			logout	body		models.LogoutRequest	true	"logout request"
+//	@Success		200		{object}	httpapi.Response
+//	@Failure		400		{object}	httpapi.Response
+//	@Failure		401		{object}	httpapi.Response
+//	@Failure		500		{object}	httpapi.Response
+//	@Security		ApiKeyAuth
 func (h *Handler) Logout(c *gin.Context) {
-	var req models.LogoutRequest
-
-	err := c.ShouldBindJSON(&req)
-	if err != nil {
-		h.handleResponse(c, httpapi.BadRequest, err.Error())
+	// extract token from jwt
+	token := c.Request.Header.Get("Authorization")
+	if token == "" {
+		h.handleResponse(c, httpapi.Unauthorized, "Access token required")
 		return
 	}
+	parts := strings.Split(token, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		h.handleResponse(c, httpapi.Unauthorized, "invalid token format")
+		return
+	}
+	token = parts[1]
+	var req models.LogoutRequest
+    req.Token = token
+	// err := c.ShouldBindJSON(&req)
+	// if err != nil {
+	// 	h.handleResponse(c, httpapi.BadRequest, err.Error())
+	// 	return
+	// }
 
 	// Add token to blacklist or invalidate it
-	err = jwt.InvalidateToken(req.Token)
+	err := jwt.InvalidateToken(req.Token)
 	if err != nil {
 		h.handleResponse(c, httpapi.InternalServerError, err)
 		return
@@ -146,18 +160,18 @@ func (h *Handler) Logout(c *gin.Context) {
 }
 
 // GetProfile godoc
-// @ID get-profile
-// @Router /v1/profile [GET]
-// @Summary Get Profile
-// @Description Retrieve the profile of the authenticated user
-// @Tags profile
-// @Accept json
-// @Produce json
-// @Param user_id path string true "User ID"
-// @Success 200 {object} models.User
-// @Failure 401 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
-// @Security ApiKeyAuth
+//	@ID				get-profile
+//	@Router			/v1/profile/{user_id} [GET]
+//	@Summary		Get Profile
+//	@Description	Retrieve the profile of the authenticated user
+//	@Tags			profile
+//	@Accept			json
+//	@Produce		json
+//	@Param			user_id	path		string	true	"User ID"
+//	@Success		200	{object}	models.User
+//	@Failure		401	{object}	httpapi.Response
+//	@Failure		500	{object}	httpapi.Response
+//	@Security		ApiKeyAuth
 func (h *Handler) GetProfile(c *gin.Context) {
 	// Get user ID from jwt token
 	userId, exists:= c.Get("user_id")
@@ -183,20 +197,20 @@ func (h *Handler) GetProfile(c *gin.Context) {
 }
 
 // UpdateProfile godoc
-// @ID update-profile
-// @Router /v1/profile [PUT]
-// @Summary Update User Profile
-// @Description Update authenticated user's profile
-// @Tags profile
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Param user_id path string true "User ID"
-// @Param profile body models.UpdateProfileRequest true "profile data"
-// @Success 200 {object} httpapi.Response
-// @Failure 400 {object} httpapi.Response
-// @Failure 401 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
+//	@ID				update-profile
+//	@Router			/v1/profile/{user_id} [PUT]
+//	@Summary		Update User Profile
+//	@Description	Update authenticated user's profile
+//	@Tags			profile
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Param			user_id	path		string	true	"User ID"
+//	@Param			profile	body		models.UpdateProfileRequest	true	"profile data"
+//	@Success		200		{object}	httpapi.Response
+//	@Failure		400		{object}	httpapi.Response
+//	@Failure		401		{object}	httpapi.Response
+//	@Failure		500		{object}	httpapi.Response
 func (h *Handler) UpdateProfile(c *gin.Context) {
 	userId, exists:= c.Get("user_id")
 	if !exists {
@@ -230,19 +244,19 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 
 
 // UpdatePassword godoc
-// @ID update-password
-// @Router /v1/profile/password [PUT]
-// @Summary Update User Password
-// @Description Update authenticated user's password
-// @Tags profile
-// @Accept json
-// @Produce json
-// @Security ApiKeyAuth
-// @Param password body models.UpdatePasswordRequest true "password data"
-// @Success 200 {object} httpapi.Response
-// @Failure 400 {object} httpapi.Response
-// @Failure 401 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
+//	@ID				update-password
+//	@Router			/v1/profile/password [PUT]
+//	@Summary		Update User Password
+//	@Description	Update authenticated user's password
+//	@Tags			profile
+//	@Accept			json
+//	@Produce		json
+//	@Security		ApiKeyAuth
+//	@Param			password	body		models.UpdatePasswordRequest	true	"password data"
+//	@Success		200			{object}	httpapi.Response
+//	@Failure		400			{object}	httpapi.Response
+//	@Failure		401			{object}	httpapi.Response
+//	@Failure		500			{object}	httpapi.Response
 func (h *Handler) UpdatePassword(c *gin.Context) {
     // Extract user ID from JWT token
 	userId, exists:= c.Get("user_id")
@@ -277,19 +291,19 @@ func (h *Handler) UpdatePassword(c *gin.Context) {
 }
 
 // DeleteUser godoc
-// @ID delete-user
-// @Router /v1/profile/{user_id} [DELETE]
-// @Summary Delete User
-// @Description Delete a user by ID
-// @Tags profile
-// @Accept json
-// @Produce json
-// @Param user_id path string true "User ID"
-// @Success 200 {object} httpapi.Response
-// @Failure 400 {object} httpapi.Response
-// @Failure 204 {object} httpapi.Response
-// @Failure 500 {object} httpapi.Response
-// @Security ApiKeyAuth
+//	@ID				delete-user
+//	@Router			/v1/profile/{user_id} [DELETE]
+//	@Summary		Delete User
+//	@Description	Delete a user by ID
+//	@Tags			profile
+//	@Accept			json
+//	@Produce		json
+//	@Param			user_id	path		string	true	"User ID"
+//	@Success		200		{object}	httpapi.Response
+//	@Failure		400		{object}	httpapi.Response
+//	@Failure		204		{object}	httpapi.Response
+//	@Failure		500		{object}	httpapi.Response
+//	@Security		ApiKeyAuth
 // func (h *Handler) DeleteUser(c *gin.Context) {
 // 	id := c.Param("user_id")
 // 	if id == "" {

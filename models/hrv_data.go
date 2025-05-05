@@ -11,7 +11,7 @@ type SensorData struct {
 	SensorDataID string     `json:"sensor_data_id"`               // Unique identifier for the sensor data
 	UserID       string     `json:"user_id" binding:"required"`   // Unique identifier for the user
 	DeviceID     string     `json:"device_id,omitempty"`          // Optional: Identifier for the specific device
-	Time         *time.Time `json:"time" binding:"required"`      // Timestamp of the reading
+	Time         *time.Time `json:"timestamp" binding:"required"`      // Timestamp of the reading
 	Data         []PPGData `json:"data" binding:"required,gt=0"` // Heart rate value (e.g., beats per minute)
 }
 

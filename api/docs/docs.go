@@ -105,6 +105,11 @@ const docTemplate = `{
         },
         "/v1/analysis/{analysis_id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve analysis data by its ID",
                 "consumes": [
                     "application/json"
@@ -209,6 +214,11 @@ const docTemplate = `{
         },
         "/v1/auth/logout": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Invalidate user's JWT token",
                 "consumes": [
                     "application/json"
@@ -480,6 +490,11 @@ const docTemplate = `{
         },
         "/v1/sensor-data": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Save sensor data for analysis",
                 "consumes": [
                     "application/json"
@@ -525,8 +540,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user-analysis/{user_id}": {
+        "/v1/user-analysis": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve all analysis data for a specific user within a date range",
                 "consumes": [
                     "application/json"
@@ -776,7 +796,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "data",
-                "time",
+                "timestamp",
                 "user_id"
             ],
             "properties": {
@@ -795,7 +815,7 @@ const docTemplate = `{
                     "description": "Unique identifier for the sensor data",
                     "type": "string"
                 },
-                "time": {
+                "timestamp": {
                     "description": "Timestamp of the reading",
                     "type": "string"
                 },
@@ -940,7 +960,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
-            "description": "Enter the token , e.g. \"abcde12345\"",
+            "description": "Enter the token with Bearer prefix, e.g. \"Bearer abcde12345\"",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

@@ -13,37 +13,37 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
-// @title           BeatSync API
-// @version         1.0
-// @description     This is an BeatSync application API
-// @termsOfService  http://swagger.io/terms/
+//	@title			BeatSync API
+//	@version		1.0
+//	@description	This is an BeatSync application API
+//	@termsOfService	http://swagger.io/terms/
 
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
 
-// @license.name  Apache 2.0
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
-// @BasePath  /api
+//	@host		localhost:8080
+//	@BasePath	/api
 
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-// @description Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Enter the token with Bearer prefix, e.g. "Bearer abcde12345"
 
-// @security ApiKeyAuth
+//	@security	ApiKeyAuth
 
 // SetUpRouter godoc
-// @description This is an api gateway
-// @termsOfService  http://swagger.io/terms/
-// @contact.name    API Support
-// @contact.url     http://www.swagger.io/support
-// @contact.email   support@swagger.io
-// @license.name    Apache 2.0
-// @license.url     http://www.apache.org/licenses/LICENSE-2.0.html
-// @BasePath        /api/
+//	@description	This is an api gateway
+//	@termsOfService	http://swagger.io/terms/
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+//	@BasePath		/api/
 
 func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 	r = gin.New()
@@ -74,17 +74,15 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
         protected:=v1.Group("")
 		protected.Use(middleware.AuthMiddleware())
 		// Profile routes
-		profile := protected.Group("/profile")
-		profile.Use(middleware.AuthMiddleware())
-		{
-			profile.GET("/:user_id", h.GetProfile)
-			profile.PUT("/:user_id", h.UpdateProfile)
-			profile.PUT("/password", h.UpdatePassword)
-		}
+		
+			protected.GET("/profile/:user_id", h.GetProfile)
+			protected.PUT("/profile/:user_id", h.UpdateProfile)
+			protected.PUT("/profile/password", h.UpdatePassword)
+		
         
 		protected.POST("sensor-data", h.SaveSensorData)
 		protected.GET("analysis/:analysis_id", h.GetAnalysisByID)
-		protected.GET("user-analysis/:user_id", h.GetUserAnalysis)
+		protected.GET("user-analysis", h.GetUserAnalysis)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
