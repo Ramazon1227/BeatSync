@@ -62,14 +62,14 @@ func (h *Handler) SaveSensorData(c *gin.Context) {
 
 // GetAnalysisByID godoc
 // @ID get-analysis-by-id
-// @Router /v1/data/analysis/{analysis_id} [GET]
+// @Router /v1/analysis/{analysis_id} [GET]
 // @Summary Get Analysis By ID
 // @Description Retrieve analysis data by its ID
 // @Tags data
 // @Accept json
 // @Produce json
 // @Param analysis_id path string true "Analysis ID"
-// @Success 200 {object} models.Analysis
+// @Success 200 {object} models.HRVAnalysisResult
 // @Failure 400 {object} httpapi.Response
 // @Failure 404 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
@@ -96,7 +96,7 @@ func (h *Handler) GetAnalysisByID(c *gin.Context) {
 
 // GetUserAnalysis godoc
 // @ID get-user-analysis
-// @Router /v1/data/user/{user_id}/analysis [GET]
+// @Router /v1/user-analysis/{user_id} [GET]
 // @Summary Get User Analysis
 // @Description Retrieve all analysis data for a specific user within a date range
 // @Tags data
@@ -105,7 +105,7 @@ func (h *Handler) GetAnalysisByID(c *gin.Context) {
 // @Param user_id path string true "User ID"
 // @Param start_date query string false "Start date in YYYY-MM-DD format"
 // @Param end_date query string false "End date in YYYY-MM-DD format"
-// @Success 200 {array} models.Analysis
+// @Success 200 {array} models.UserHRVAnalysisResponse
 // @Failure 400 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
 func (h *Handler) GetUserAnalysis(c *gin.Context) {

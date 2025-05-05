@@ -1,8 +1,6 @@
 package models
+import "time"
 
-import (
-	"time"
-)
 
 type User struct {
 	ID        string     `json:"id"`
@@ -13,9 +11,9 @@ type User struct {
 	// Role      string     `json:"role"`
 	Phone     string     `json:"phone"`
 	Gender    string     `json:"gender"`
-	Age       int        `json:"age"`
-	Weight    float32    `json:"weight"`
-	Height    float32    `json:"height"`
+	Age       int64        `json:"age"`
+	Weight    float64    `json:"weight"`
+	Height    float64    `json:"height"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }

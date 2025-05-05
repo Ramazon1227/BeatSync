@@ -60,13 +60,7 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 	api.GET("/config", h.GetConfig)
 	v1 := api.Group("/v1")
 	{
-		// User
-		// v1.POST("auth/register", h.RegisterUser)
-		// v1.POST("auth/login", h.Login)
-		// v1.GET("user", h.GetUserList)
-		// v1.PUT("user/:user_id", h.UpdateUser)
-		// v1.DELETE("user/:user_id", h.DeleteUser)
-
+		
 		// Auth routes
 		auth := v1.Group("/auth")
 		{
@@ -81,8 +75,11 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 		{
 			profile.GET("/:user_id", h.GetProfile)
 			profile.PUT("/:user_id", h.UpdateProfile)
+			profile.PUT("/password", h.UpdatePassword)
 		}
-
+       
+		v1.GET("analysis/:analysis_id", h.GetAnalysisByID)
+		v1.GET("user-analysis/:user_id", h.GetUserAnalysis)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

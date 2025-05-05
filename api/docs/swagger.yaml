@@ -55,6 +55,37 @@ definitions:
       status:
         type: string
     type: object
+  models.HRVAnalysisResult:
+    properties:
+      analysis_id:
+        description: Unique identifier for the analysis
+        type: string
+      analysis_time:
+        description: Timestamp of when the analysis was performed
+        type: string
+      hf:
+        type: number
+      lf:
+        type: number
+      lf_hf_ratio:
+        type: number
+      nn50:
+        type: integer
+      pnn50:
+        type: number
+      rmssd:
+        type: number
+      sd1:
+        type: number
+      sd2:
+        type: number
+      sdnn:
+        type: number
+      user_id:
+        type: string
+      vlf:
+        type: number
+    type: object
   models.LoginRequest:
     properties:
       email:
@@ -82,6 +113,52 @@ definitions:
         type: string
     required:
     - token
+    type: object
+  models.PPGData:
+    properties:
+      timestamp:
+        type: string
+      value:
+        type: number
+    required:
+    - timestamp
+    - value
+    type: object
+  models.SensorData:
+    properties:
+      data:
+        description: Heart rate value (e.g., beats per minute)
+        items:
+          $ref: '#/definitions/models.PPGData'
+        type: array
+      device_id:
+        description: 'Optional: Identifier for the specific device'
+        type: string
+      sensor_data_id:
+        description: Unique identifier for the sensor data
+        type: string
+      time:
+        description: Timestamp of the reading
+        type: string
+      user_id:
+        description: Unique identifier for the user
+        type: string
+    required:
+    - data
+    - time
+    - user_id
+    type: object
+  models.UpdatePasswordRequest:
+    properties:
+      current_password:
+        example: oldpassword123
+        type: string
+      new_password:
+        example: newpassword123
+        type: string
+    required:
+    - current_password
+    - new_password
     type: object
   models.UpdateProfileRequest:
     properties:
@@ -130,6 +207,15 @@ definitions:
         type: string
       weight:
         type: number
+    type: object
+  models.UserHRVAnalysisResponse:
+    properties:
+      analysis:
+        items:
+          $ref: '#/definitions/models.HRVAnalysisResult'
+        type: array
+      count:
+        type: integer
     type: object
   models.UserRegisterModel:
     properties:
@@ -213,6 +299,40 @@ paths:
           schema:
             $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
       summary: returns "pong" message
+  /v1/analysis/{analysis_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve analysis data by its ID
+      operationId: get-analysis-by-id
+      parameters:
+      - description: Analysis ID
+        in: path
+        name: analysis_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HRVAnalysisResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: Get Analysis By ID
+      tags:
+      - data
   /v1/auth/login:
     post:
       consumes:
@@ -320,6 +440,12 @@ paths:
       - application/json
       description: Retrieve the profile of the authenticated user
       operationId: get-profile
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -381,6 +507,114 @@ paths:
       summary: Update User Profile
       tags:
       - profile
+  /v1/profile/password:
+    put:
+      consumes:
+      - application/json
+      description: Update authenticated user's password
+      operationId: update-password
+      parameters:
+      - description: password data
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update User Password
+      tags:
+      - profile
+  /v1/sensor-data:
+    post:
+      consumes:
+      - application/json
+      description: Save sensor data for analysis
+      operationId: save-sensor-data
+      parameters:
+      - description: Sensor data
+        in: body
+        name: sensor_data
+        required: true
+        schema:
+          $ref: '#/definitions/models.SensorData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: Save Sensor Data
+      tags:
+      - data
+  /v1/user-analysis/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all analysis data for a specific user within a date range
+      operationId: get-user-analysis
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Start date in YYYY-MM-DD format
+        in: query
+        name: start_date
+        type: string
+      - description: End date in YYYY-MM-DD format
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserHRVAnalysisResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response'
+      summary: Get User Analysis
+      tags:
+      - data
 securityDefinitions:
   ApiKeyAuth:
     description: Enter the token , e.g. "abcde12345"

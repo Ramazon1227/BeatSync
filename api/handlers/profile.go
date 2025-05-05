@@ -230,6 +230,7 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 	h.handleResponse(c, httpapi.OK, resp)
 }
 
+
 // UpdatePassword godoc
 // @ID update-password
 // @Router /v1/profile/password [PUT]
@@ -244,32 +245,40 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 // @Failure 400 {object} httpapi.Response
 // @Failure 401 {object} httpapi.Response
 // @Failure 500 {object} httpapi.Response
-// func (h *Handler) UpdatePassword(c *gin.Context) {
-// 	userId, exists := c.Get("user_id")
-// 	if !exists {
-// 		h.handleResponse(c, httpapi.Unauthorized, "unauthorized")
-// 		return
-// 	}
+func (h *Handler) UpdatePassword(c *gin.Context) {
+    // Extract user ID from JWT token
+    claims, err := jwt.ExtractClaims(c.Request.Header.Get("Authorization"))
+    if err != nil {
+        h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+        return
+    }
 
-// 	var req models.UpdatePasswordRequest
-// 	err := c.ShouldBindJSON(&req)
-// 	if err != nil {
-// 		h.handleResponse(c, httpapi.BadRequest, err.Error())
-// 		return
-// 	}
+    userId, exists := claims["user_id"]
+    if !exists {
+        h.handleResponse(c, httpapi.Unauthorized, "user not authenticated")
+        return
+    }
 
-// 	err = h.storage.User().UpdatePassword(context.Background(), userId.(string), req.CurrentPassword, req.NewPassword)
-// 	if err != nil {
-// 		if err == storage.ErrorNotFound {
-// 			h.handleResponse(c, httpapi.NoContent, err)
-// 			return
-// 		}
-// 		h.handleResponse(c, httpapi.InternalServerError, err)
-// 		return
-// 	}
+    var req models.UpdatePasswordRequest
+    err = c.ShouldBindJSON(&req)
+    if err != nil {
+        h.handleResponse(c, httpapi.BadRequest, err.Error())
+        return
+    }
 
-// 	h.handleResponse(c, httpapi.OK, "password updated successfully")
-// }
+    // Update the password in the storage
+    err = h.storage.User().UpdatePassword(context.Background(), userId.(string), req.CurrentPassword, req.NewPassword)
+    if err != nil {
+        if err == storage.ErrorNotFound {
+            h.handleResponse(c, httpapi.NoContent, err)
+            return
+        }
+        h.handleResponse(c, httpapi.InternalServerError, err)
+        return
+    }
+
+    h.handleResponse(c, httpapi.OK, "password updated successfully")
+}
 
 // DeleteUser godoc
 // @ID delete-user

@@ -103,6 +103,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/analysis/{analysis_id}": {
+            "get": {
+                "description": "Retrieve analysis data by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get Analysis By ID",
+                "operationId": "get-analysis-by-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Analysis ID",
+                        "name": "analysis_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.HRVAnalysisResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/login": {
             "post": {
                 "description": "Authenticate user and return JWT token",
@@ -256,6 +307,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/profile/password": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update authenticated user's password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "Update User Password",
+                "operationId": "update-password",
+                "parameters": [
+                    {
+                        "description": "password data",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatePasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/profile/{user_id}": {
             "get": {
                 "security": [
@@ -275,6 +384,15 @@ const docTemplate = `{
                 ],
                 "summary": "Get Profile",
                 "operationId": "get-profile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -347,6 +465,113 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/sensor-data": {
+            "post": {
+                "description": "Save sensor data for analysis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "summary": "Save Sensor Data",
+                "operationId": "save-sensor-data",
+                "parameters": [
+                    {
+                        "description": "Sensor data",
+                        "name": "sensor_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SensorData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user-analysis/{user_id}": {
+            "get": {
+                "description": "Retrieve all analysis data for a specific user within a date range",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "summary": "Get User Analysis",
+                "operationId": "get-user-analysis",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start date in YYYY-MM-DD format",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date in YYYY-MM-DD format",
+                        "name": "end_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserHRVAnalysisResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/github_com_Ramazon1227_BeatSync_api_http.Response"
                         }
@@ -444,6 +669,52 @@ const docTemplate = `{
                 }
             }
         },
+        "models.HRVAnalysisResult": {
+            "type": "object",
+            "properties": {
+                "analysis_id": {
+                    "description": "Unique identifier for the analysis",
+                    "type": "string"
+                },
+                "analysis_time": {
+                    "description": "Timestamp of when the analysis was performed",
+                    "type": "string"
+                },
+                "hf": {
+                    "type": "number"
+                },
+                "lf": {
+                    "type": "number"
+                },
+                "lf_hf_ratio": {
+                    "type": "number"
+                },
+                "nn50": {
+                    "type": "integer"
+                },
+                "pnn50": {
+                    "type": "number"
+                },
+                "rmssd": {
+                    "type": "number"
+                },
+                "sd1": {
+                    "type": "number"
+                },
+                "sd2": {
+                    "type": "number"
+                },
+                "sdnn": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "vlf": {
+                    "type": "number"
+                }
+            }
+        },
         "models.LoginRequest": {
             "type": "object",
             "required": [
@@ -483,6 +754,71 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "models.PPGData": {
+            "type": "object",
+            "required": [
+                "timestamp",
+                "value"
+            ],
+            "properties": {
+                "timestamp": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.SensorData": {
+            "type": "object",
+            "required": [
+                "data",
+                "time",
+                "user_id"
+            ],
+            "properties": {
+                "data": {
+                    "description": "Heart rate value (e.g., beats per minute)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PPGData"
+                    }
+                },
+                "device_id": {
+                    "description": "Optional: Identifier for the specific device",
+                    "type": "string"
+                },
+                "sensor_data_id": {
+                    "description": "Unique identifier for the sensor data",
+                    "type": "string"
+                },
+                "time": {
+                    "description": "Timestamp of the reading",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "Unique identifier for the user",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdatePasswordRequest": {
+            "type": "object",
+            "required": [
+                "current_password",
+                "new_password"
+            ],
+            "properties": {
+                "current_password": {
+                    "type": "string",
+                    "example": "oldpassword123"
+                },
+                "new_password": {
+                    "type": "string",
+                    "example": "newpassword123"
                 }
             }
         },
@@ -555,6 +891,20 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "number"
+                }
+            }
+        },
+        "models.UserHRVAnalysisResponse": {
+            "type": "object",
+            "properties": {
+                "analysis": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.HRVAnalysisResult"
+                    }
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },
