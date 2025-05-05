@@ -124,53 +124,54 @@ func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey
 	for iterator.Next() {
 		count++
 		value := iterator.Value()
-        _,ok:= value["user_id"]
+		fmt.Println("Value:", value)
+        _,ok:= value["user_id"].(string)
 		if ok {
 			userData.ID = value["user_id"].(string)
 		}
 	
-		_,ok = value["first_name"]
+		_,ok = value["first_name"].(string)
 		if ok {
 			userData.FirstName = value["first_name"].(string)
 		}
 
-		_,ok = value["last_name"]
+		_,ok = value["last_name"].(string)
 		if ok {
 			userData.LastName = value["last_name"].(string)
 		}
 
 		// userData.Email = value["email"].(string)
-		_,ok = value["email"]
+		_,ok = value["email"].(string)
 		if ok {
 			userData.Email = value["email"].(string)
 		}
 		// userData.Password = value["password"].(string)
 		// userData.Phone = value["phone"].(string)
-		_,ok = value["phone"]
+		_,ok = value["phone"].(string)
 		if ok {
 			userData.Phone = value["phone"].(string)
 		}
 		// userData.Gender = value["gender"].(string)
-		_,ok = value["gender"]
+		_,ok = value["gender"].(string)
 		if ok {
 			userData.Gender = value["gender"].(string)
 		}
 		// userData.Age = value["age"].(int)
-		_,ok = value["age"]
+		_,ok = value["age"].(int64)
 		if ok {
 			userData.Age = value["age"].(int64)
 		}
 		// userData.Height = value["height"].(float32)
-		_,ok = value["height"]
+		_,ok = value["height"].(float64)
 		if ok {
 			userData.Height = value["height"].(float64)
 		}
 		// userData.Weight = value["weight"].(float32)
-		_,ok = value["weight"]
+		_,ok = value["weight"].(float64)
 		if ok {
 			userData.Weight = value["weight"].(float64)
 		}
-		_,ok = value["password"]
+		_,ok = value["password"].(string)
 		if ok {
 			userData.Password = value["password"].(string)
 		}
@@ -181,6 +182,7 @@ func (user *UserRepoImpl) GetById(ctx context.Context, entity *models.PrimaryKey
 		}
 	
 	}
+
 	if count == 0 {
 		return nil, storage.ErrorNotFound
 	}
@@ -245,7 +247,7 @@ func (user *UserRepoImpl) UpdatePassword(ctx context.Context, userId string, cur
 	}
 
 	// Check if the current password is correct
-	if !utils.CheckPassword(userData.Password,newPassword) {
+	if !utils.CheckPassword(userData.Password,currentPassword) {
 		return errors.New("current password is incorrect")
 	}
 
@@ -262,7 +264,7 @@ func (user *UserRepoImpl) UpdatePassword(ctx context.Context, userId string, cur
 
 	point := influxdb3.NewPointWithMeasurement("user_info").
 		SetTag("user_id", userId).
-		SetField("email", userData.Email).
+		SetTag("email", userData.Email).
 		SetField("first_name", userData.FirstName).
 		SetField("last_name", userData.LastName).
 		SetField("password", hashedPassword).

@@ -53,14 +53,14 @@ func (data *AnalyzeRepoImpl) SaveAnalysis(ctx context.Context, entity *models.Se
 	analysisID := uuid.NewV4().String()
 	fmt.Println("Entity:", entity)
 	sensorDataID := uuid.NewV4().String()
-	rr := hrv.ExtractRR(entity.Data, 300, 0.5) // minPeakDistanceMs=300, minPeakHeight=0.5
-
+	rr := hrv.ExtractRR(entity.Data, 300, 0.7) // minPeakDistanceMs=300, minPeakHeight=0.5
+   fmt.Println("RR Intervals:", rr)
 	sdnn := hrv.CalculateSDNN(rr)
 	rmssd := hrv.CalculateRMSSD(rr)
 	nn50 := hrv.CalculateNN50(rr)
 	pnn50 := hrv.CalculatePNN50(rr)
 	sd1, sd2 := hrv.CalculateSD1SD2(rr)
-	lf, hf, vlf, lfHfRatio := hrv.CalculateFrequencyDomain(rr) // optio
+	lf, hf, vlf, lfHfRatio := hrv.CalculateFrequencyDomain(rr) 
 
 	options := influxdb3.WriteOptions{
 		Database: "beatsync",
@@ -110,7 +110,7 @@ func (data *AnalyzeRepoImpl) GetAnalysisByID(ctx context.Context,pkey *models.Pr
 			UserID:       value["user_id"].(string),
 			SDNN:         value["sdnn"].(float64),
 			RMSSD:        value["rmssd"].(float64),
-			NN50:         value["nn50"].(int),
+			NN50:         value["nn50"].(int64),
 			PNN50:        value["pnn50"].(float64),
 			SD1:          value["sd1"].(float64),
 			SD2:          value["sd2"].(float64),
@@ -118,7 +118,7 @@ func (data *AnalyzeRepoImpl) GetAnalysisByID(ctx context.Context,pkey *models.Pr
 			HF:           value["hf"].(float64),
 			VLF:          value["vlf"].(float64),
 			LFHF:         value["lf_hf_ratio"].(float64),
-			AnalysisTime: value["analysis_time"].(*time.Time),
+			AnalysisTime: value["analysis_time"].(string),
 		}
 		return analysis, nil
 	}
@@ -140,12 +140,12 @@ func (data *AnalyzeRepoImpl) GetUserAnalysis(ctx context.Context, userID, startD
 	queryOptions := influxdb3.QueryOptions{
 		Database: "beatsync",
 	}
-
+    fmt.Println("Query:", query)
 	iterator, err := data.db.QueryWithOptions(ctx, &queryOptions, query)
 	if err != nil {
 		return nil, err
 	}
-
+    
 	var analysisList []*models.HRVAnalysisResult
 	var count int
 	for iterator.Next() {
@@ -156,7 +156,7 @@ func (data *AnalyzeRepoImpl) GetUserAnalysis(ctx context.Context, userID, startD
 			UserID:       value["user_id"].(string),
 			SDNN:         value["sdnn"].(float64),
 			RMSSD:        value["rmssd"].(float64),
-			NN50:         value["nn50"].(int),
+			NN50:         value["nn50"].(int64),
 			PNN50:        value["pnn50"].(float64),
 			SD1:          value["sd1"].(float64),
 			SD2:          value["sd2"].(float64),
@@ -164,7 +164,7 @@ func (data *AnalyzeRepoImpl) GetUserAnalysis(ctx context.Context, userID, startD
 			HF:           value["hf"].(float64),
 			VLF:          value["vlf"].(float64),
 			LFHF:         value["lf_hf_ratio"].(float64),
-			AnalysisTime: value["analysis_time"].(*time.Time),
+			AnalysisTime: value["analysis_time"].(string),
 		}
 		analysisList = append(analysisList, &analysis)
 	}

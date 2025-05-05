@@ -90,26 +90,44 @@ func stddev(data []float64) float64 {
 
 
 // Extract RR intervals from PPG data (in milliseconds)
-func ExtractRR(ppg []*models.PPGData, minPeakDistanceMs int, minPeakHeight float64) []float64 {
+func ExtractRR(ppg []models.PPGData, minPeakDistanceMs int, minPeakHeight float64) []float64 {
+	if len(ppg) < 3 {
+		fmt.Println("Error: Insufficient PPG data for peak detection")
+		return nil
+	}
+
 	var rr []float64
 	var lastPeakTime *time.Time
 
+	// Validate PPG data
+	for i := 1; i < len(ppg); i++ {
+		if ppg[i].TimeStamp.Before(*ppg[i-1].TimeStamp) {
+			fmt.Println("Error: PPG timestamps are not sorted")
+			return nil
+		}
+	}
+
 	for i := 1; i < len(ppg)-1; i++ {
-		// Simple peak detection: value greater than neighbors and threshold
+		// Peak detection: value greater than neighbors and threshold
 		if ppg[i].Value > ppg[i-1].Value &&
 			ppg[i].Value > ppg[i+1].Value &&
-			ppg[i].Value > minPeakHeight {
-
+			ppg[i].Value >= minPeakHeight {
 			if lastPeakTime != nil {
 				delta := ppg[i].TimeStamp.Sub(*lastPeakTime).Milliseconds()
-				if delta >= int64(minPeakDistanceMs) {
+				if delta >= int64(minPeakDistanceMs) && delta > 0 {
 					rr = append(rr, float64(delta))
 					lastPeakTime = ppg[i].TimeStamp
+				} else {
+					fmt.Printf("Warning: Skipped peak at %v, delta %d ms too small or invalid\n", ppg[i].TimeStamp, delta)
 				}
 			} else {
 				lastPeakTime = ppg[i].TimeStamp
 			}
 		}
+	}
+
+	if len(rr) == 0 {
+		fmt.Println("Warning: No RR intervals detected. Check minPeakHeight or minPeakDistanceMs")
 	}
 	return rr
 }
@@ -211,11 +229,11 @@ func CalculateFrequencyDomain(rr []float64) (lf, hf, vlf, lfHfRatio float64) {
 	lf = lfPower
 	hf = hfPower
 	vlf = vlfPower
-
+    // fmt.Println("LF:", lf, "HF:", hf, "VLF:", vlf)
 	if hf > 0 {
 		lfHfRatio = lf / hf
 	} else {
-		lfHfRatio = math.NaN()
+		lfHfRatio = 0.0
 	}
 
 	return lf, hf, vlf, lfHfRatio

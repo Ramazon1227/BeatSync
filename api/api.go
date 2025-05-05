@@ -77,7 +77,8 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 			profile.PUT("/:user_id", h.UpdateProfile)
 			profile.PUT("/password", h.UpdatePassword)
 		}
-       
+        
+		v1.POST("sensor-data", h.SaveSensorData)
 		v1.GET("analysis/:analysis_id", h.GetAnalysisByID)
 		v1.GET("user-analysis/:user_id", h.GetUserAnalysis)
 	}

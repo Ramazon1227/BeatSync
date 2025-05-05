@@ -70,7 +70,7 @@ func (h *Handler) getStartDateParam(c *gin.Context) (startDate string, err error
 }
 
 func (h *Handler) getEndDateParam(c *gin.Context) (endDate string, err error) {
-	endDateStr := c.DefaultQuery("end_date", time.Now().Format("2006-01-02"))
+	endDateStr := c.DefaultQuery("end_date", time.Now().AddDate(0,0,1).Format("2006-01-02"))
 	if _, err := time.Parse("2006-01-02", endDateStr); err != nil {
 		return "", err
 	}
