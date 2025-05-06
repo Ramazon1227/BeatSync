@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/Ramazon1227/BeatSync/config"
 	"github.com/Ramazon1227/BeatSync/models"
+	"github.com/dgrijalva/jwt-go"
 )
 
 var (
-	SigningKey = []byte("your-secret-key") // TODO: Move to environment variables
+	SigningKey = []byte(config.Load().SecretKey) // TODO: Move to environment variables
 	ExpiryDuration = 24 * time.Hour
 )
 

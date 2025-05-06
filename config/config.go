@@ -58,7 +58,7 @@ func Load() Config {
 	config := Config{}
 
     config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "BeatSync"))
-	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
+	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", ReleaseMode))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0"))
 
 	// config.ServiceHost = cast.ToString(getOrReturnDefaultValue("SERVICE_HOST", "39.101.69.244"))
