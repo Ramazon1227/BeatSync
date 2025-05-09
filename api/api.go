@@ -52,7 +52,7 @@ func SetUpRouter(h handlers.Handler, cfg config.Config) (r *gin.Engine) {
 
 	docs.SwaggerInfo.Title = cfg.ServiceName
 	docs.SwaggerInfo.Version = cfg.Version
-	docs.SwaggerInfo.Host = cfg.ServiceHost
+	docs.SwaggerInfo.Host = cfg.ServiceHost + cfg.HTTPPort
 	docs.SwaggerInfo.Schemes = []string{cfg.HTTPScheme}
 
 	r.Use(customCORSMiddleware())
