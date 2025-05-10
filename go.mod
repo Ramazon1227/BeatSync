@@ -1,6 +1,6 @@
 module github.com/Ramazon1227/BeatSync
 
-go 1.24.0
+go 1.24.2
 
 require (
 	github.com/InfluxCommunity/influxdb3-go v0.14.0
