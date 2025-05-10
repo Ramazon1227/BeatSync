@@ -22,8 +22,8 @@ const docTemplate = `{
         },
         "version": "{{.Version}}"
     },
-    "host": "{{.Host}}",
-    "basePath": "beatsync-rd26.onrender.com/api/",
+    "host": "beatsync-rd26.onrender.com",
+    "basePath": "/api",
     "paths": {
         "/config": {
             "get": {
