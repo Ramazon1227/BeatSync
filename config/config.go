@@ -58,14 +58,14 @@ func Load() Config {
 	config := Config{}
 
     config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "BeatSync"))
-	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", ReleaseMode))
+	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0"))
 
 	// config.ServiceHost = cast.ToString(getOrReturnDefaultValue("SERVICE_HOST", "39.101.69.244"))
 	config.ServiceHost = cast.ToString(getOrReturnDefaultValue("SERVICE_HOST", "localhost"))
 
 	config.HTTPPort = cast.ToString(getOrReturnDefaultValue("HTTP_PORT", ":8080"))
-	config.HTTPScheme = cast.ToString(getOrReturnDefaultValue("HTTP_SCHEME", "http"))
+	config.HTTPScheme = cast.ToString(getOrReturnDefaultValue("HTTP_SCHEME", "https"))
 
 	config.InfluxURL = cast.ToString(getOrReturnDefaultValue("INFLUX_URL", "localhost:8086"))
 	config.InfluxToken = cast.ToString(getOrReturnDefaultValue("INFLUX_TOKEN", "your-influx-token"))
