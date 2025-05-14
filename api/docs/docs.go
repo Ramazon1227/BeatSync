@@ -22,7 +22,7 @@ const docTemplate = `{
         },
         "version": "{{.Version}}"
     },
-    "host": "{{.Host}}",
+    "host":"beatsync-rd26.onrender.com",
     "basePath": "{{.BasePath}}",
     "paths": {
         "/config": {
