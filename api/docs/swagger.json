@@ -693,6 +693,10 @@
                     "description": "Timestamp of when the analysis was performed",
                     "type": "string"
                 },
+                "bpm": {
+                    "description": "Heart rate value (e.g., beats per minute)",
+                    "type": "integer"
+                },
                 "hf": {
                     "type": "number"
                 },
@@ -788,11 +792,16 @@
         "models.SensorData": {
             "type": "object",
             "required": [
+                "bpm",
                 "data",
                 "timestamp",
                 "user_id"
             ],
             "properties": {
+                "bpm": {
+                    "description": "Heart rate value (e.g., beats per minute)",
+                    "type": "integer"
+                },
                 "data": {
                     "description": "Heart rate value (e.g., beats per minute)",
                     "type": "array",

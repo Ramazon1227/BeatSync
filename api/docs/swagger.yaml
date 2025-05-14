@@ -63,6 +63,9 @@ definitions:
       analysis_time:
         description: Timestamp of when the analysis was performed
         type: string
+      bpm:
+        description: Heart rate value (e.g., beats per minute)
+        type: integer
       hf:
         type: number
       lf:
@@ -126,6 +129,9 @@ definitions:
     type: object
   models.SensorData:
     properties:
+      bpm:
+        description: Heart rate value (e.g., beats per minute)
+        type: integer
       data:
         description: Heart rate value (e.g., beats per minute)
         items:
@@ -144,6 +150,7 @@ definitions:
         description: Unique identifier for the user
         type: string
     required:
+    - bpm
     - data
     - timestamp
     - user_id

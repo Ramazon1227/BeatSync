@@ -22,8 +22,8 @@ const docTemplate = `{
         },
         "version": "{{.Version}}"
     },
-    "host": "beatsync-rd26.onrender.com",
-    "basePath": "/api",
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
     "paths": {
         "/config": {
             "get": {
@@ -700,6 +700,10 @@ const docTemplate = `{
                     "description": "Timestamp of when the analysis was performed",
                     "type": "string"
                 },
+                "bpm": {
+                    "description": "Heart rate value (e.g., beats per minute)",
+                    "type": "integer"
+                },
                 "hf": {
                     "type": "number"
                 },
@@ -795,11 +799,16 @@ const docTemplate = `{
         "models.SensorData": {
             "type": "object",
             "required": [
+                "bpm",
                 "data",
                 "timestamp",
                 "user_id"
             ],
             "properties": {
+                "bpm": {
+                    "description": "Heart rate value (e.g., beats per minute)",
+                    "type": "integer"
+                },
                 "data": {
                     "description": "Heart rate value (e.g., beats per minute)",
                     "type": "array",
