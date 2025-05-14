@@ -108,7 +108,7 @@ func (data *AnalyzeRepoImpl) GetAnalysisByID(ctx context.Context,pkey *models.Pr
 	if iterator.Next() {
 		value := iterator.Value()
 		if _,ok := value["bpm"]; !ok {
-			value["bpm"] = 0
+			value["bpm"] = int64(0)
 		}
 		// Check if the analysis ID matches the provided primary key
 		analysis := &models.HRVAnalysisResult{
@@ -159,7 +159,7 @@ func (data *AnalyzeRepoImpl) GetUserAnalysis(ctx context.Context, userID, startD
 		count++
 		value := iterator.Value()
 		if _,ok := value["bpm"]; !ok {
-			value["bpm"] = 0
+			value["bpm"] = int64(0)
 		}
 		analysis := models.HRVAnalysisResult{
 			AnalysisID:   value["analysis_id"].(string),
