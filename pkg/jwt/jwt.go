@@ -6,7 +6,7 @@ import (
 
 	"github.com/Ramazon1227/BeatSync/config"
 	"github.com/Ramazon1227/BeatSync/models"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var (
