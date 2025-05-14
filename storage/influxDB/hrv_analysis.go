@@ -38,6 +38,7 @@ func (data *AnalyzeRepoImpl) SaveSensorData(ctx context.Context, entity *models.
 		SetTag("sensor_data_id", sensorDataID).
 		SetField("date", entity.Time).
 		SetField("data", entity.Data).
+		SetField("bpm", entity.BPM).
 		SetField("created_at", time.Now().UnixNano())
 
 	if err := data.db.WritePointsWithOptions(context.Background(), &options, point); err != nil {
@@ -72,6 +73,7 @@ func (data *AnalyzeRepoImpl) SaveAnalysis(ctx context.Context, entity *models.Se
 		SetTag("device_id", entity.DeviceID).
 		SetTag("sensor_data_id", sensorDataID).
 		SetField("analysis_time", time.Now()).
+		SetField("bpm", entity.BPM).
 		SetField("sdnn", sdnn).
 		SetField("rmssd", rmssd).
 		SetField("nn50", nn50).
@@ -118,6 +120,7 @@ func (data *AnalyzeRepoImpl) GetAnalysisByID(ctx context.Context,pkey *models.Pr
 			HF:           value["hf"].(float64),
 			VLF:          value["vlf"].(float64),
 			LFHF:         value["lf_hf_ratio"].(float64),
+			BPM: 		  value["bpm"].(int64),
 			AnalysisTime: value["analysis_time"].(string),
 		}
 		return analysis, nil
@@ -154,6 +157,7 @@ func (data *AnalyzeRepoImpl) GetUserAnalysis(ctx context.Context, userID, startD
 		analysis := models.HRVAnalysisResult{
 			AnalysisID:   value["analysis_id"].(string),
 			UserID:       value["user_id"].(string),
+			BPM:          value["bpm"].(int64),
 			SDNN:         value["sdnn"].(float64),
 			RMSSD:        value["rmssd"].(float64),
 			NN50:         value["nn50"].(int64),

@@ -246,24 +246,3 @@ func complexify(real []float64) []complex128 {
 	}
 	return complexData
 }
-
-// func main() {
-// 	// Example usage with a synthetic RR interval series (in seconds)
-// 	rrIntervals := []float64{0.8, 0.82, 0.78, 0.85, 0.81, 0.79, 0.83, 0.8, 0.82, 0.78}
-// 	lf, hf, vlf, lfHf := CalculateFrequencyDomainPrecise(rrIntervals)
-// 	fmt.Printf("Precise LF Power: %.4f\n", lf)
-// 	fmt.Printf("Precise HF Power: %.4f\n", hf)
-// 	fmt.Printf("Precise VLF Power: %.4f\n", vlf)
-// 	fmt.Printf("Precise LF/HF Ratio: %.4f\n", lfHf)
-
-// 	// Example with more data
-// 	longRR := make([]float64, 100)
-// 	for i := 0; i < 100; i++ {
-// 		longRR[i] = 0.8 + 0.05*math.Sin(2*math.Pi*float64(i)/50) + 0.02*math.Sin(2*math.Pi*float64(i)/10)
-// 	}
-// 	lfLong, hfLong, vlfLong, lfHfLong := CalculateFrequencyDomainPrecise(longRR)
-// 	fmt.Printf("\nPrecise Long RR - LF Power: %.4f\n", lfLong)
-// 	fmt.Printf("Precise Long RR - HF Power: %.4f\n", hfLong)
-// 	fmt.Printf("Precise Long RR - VLF Power: %.4f\n", vlfLong)
-// 	fmt.Printf("Precise Long RR - LF/HF Ratio: %.4f\n", lfHfLong)
-// }
